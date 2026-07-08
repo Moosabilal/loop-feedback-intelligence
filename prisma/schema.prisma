@@ -1,0 +1,133 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [vector]
+}
+
+enum Role {
+  ADMIN
+  ANALYST
+  VIEWER
+}
+
+enum FeedbackStatus {
+  NEW
+  REVIEWED
+  ACTIONED
+}
+
+enum Sentiment {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
+
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users          User[]
+  feedbacks      Feedback[]
+  themes         Theme[]
+  feedbackThemes FeedbackTheme[]
+  embeddings     Embedding[]
+  reports        Report[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         Role     @default(VIEWER)
+  workspaceId  String
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Feedback {
+  id             String         @id @default(cuid())
+  content        String
+  channel        String
+  sentiment      Sentiment?
+  sentimentScore Float?
+  status         FeedbackStatus @default(NEW)
+  featureArea    String?
+  rationale      String?
+  
+  workspaceId    String
+  workspace      Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  themes         FeedbackTheme[]
+  embeddings     Embedding[]
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Theme {
+  id          String   @id @default(cuid())
+  name        String
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  feedbacks   FeedbackTheme[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([workspaceId, name])
+}
+
+model FeedbackTheme {
+  id          String   @id @default(cuid())
+  confidence  Float
+
+  feedbackId  String
+  feedback    Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  themeId     String
+  theme       Theme    @relation(fields: [themeId], references: [id], onDelete: Cascade)
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([feedbackId, themeId])
+}
+
+model Embedding {
+  id          String   @id @default(cuid())
+  vector      Unsupported("vector(1536)")?
+
+  feedbackId  String
+  feedback    Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+}
+
+model Report {
+  id             String   @id @default(cuid())
+  title          String
+  content        String
+  dateRangeStart DateTime
+  dateRangeEnd   DateTime
+
+  workspaceId    String
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
