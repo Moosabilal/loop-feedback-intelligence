@@ -1,0 +1,12 @@
+Script started on 2026-07-09 00:01:04+05:30 [COMMAND="npx prisma migrate dev --name init" TERM="dumb" TTY="/dev/pts/0" COLUMNS="80" LINES="24"]
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "postgres", schema "public" at "db.mzshmhkdyhslvlxffrtb.supabase.co:5432"
+
+Error: Prisma Migrate has detected that the environment is non-interactive, which is not supported.
+
+`prisma migrate dev` is an interactive command designed to create new migrations and evolve the database in development.
+To apply existing migrations in deployments, use prisma migrate deploy.
+See https://www.prisma.io/docs/reference/api-reference/command-reference#migrate-deploy
+
+Script done on 2026-07-09 00:01:21+05:30 [COMMAND_EXIT_CODE="1"]
