@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import { Role } from '@prisma/client';
 import { SignUpInput, signUpSchema } from '../schemas/auth';
 
+import { InviteMemberInput, inviteMemberSchema } from '../schemas/member';
+
 export class AuthService {
   /**
    * Handles user sign-up: validates input, creates Workspace and User atomically.
@@ -48,5 +50,50 @@ export class AuthService {
     });
 
     return result.user;
+  }
+
+  /**
+   * Invites a new member to an existing workspace.
+   * Auto-assigns the default password 'loop123'.
+   */
+  async inviteMember(input: InviteMemberInput, workspaceId: string) {
+    const parsed = inviteMemberSchema.safeParse(input);
+    if (!parsed.success) {
+      throw new Error(parsed.error.issues[0].message);
+    }
+
+    const { name, email, role } = parsed.data;
+
+    // Ensure user doesn't already exist globally (since emails are unique)
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (existingUser) {
+      throw new Error('User already exists with that email.');
+    }
+
+    // Hash default password
+    const defaultPassword = 'loop123';
+    const passwordHash = await bcrypt.hash(defaultPassword, 10);
+
+    // Create user scoped strictly to the provided workspaceId
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        role,
+        passwordHash,
+        workspaceId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+
+    return { user, defaultPassword };
   }
 }
