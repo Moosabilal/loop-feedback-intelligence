@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error: any) {
-    const status = error.message.includes('Forbidden') ? 403 : 400;
+    const status = error.message.includes('Forbidden') ? 403 : 401;
     return NextResponse.json({ error: error.message }, { status });
   }
 }
