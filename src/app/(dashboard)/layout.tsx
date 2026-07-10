@@ -4,11 +4,13 @@ import { useSession, signOut } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { ConfirmModal } from './components/ConfirmModal';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const pathname = usePathname();
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -66,7 +68,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
 
           <button
-            onClick={() => signOut({ callbackUrl: '/login' })}
+            onClick={() => setIsLogoutModalOpen(true)}
             className="w-full px-4 py-2 text-sm text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
           >
             Log Out
@@ -76,6 +78,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Main Content */}
       <main className="flex-1 min-h-screen overflow-auto relative">{children}</main>
+
+      <ConfirmModal
+        isOpen={isLogoutModalOpen}
+        title="Log Out"
+        message="Are you sure you want to log out?"
+        confirmText="Log Out"
+        isDestructive={true}
+        onConfirm={() => signOut({ callbackUrl: '/login' })}
+        onClose={() => setIsLogoutModalOpen(false)}
+      />
     </div>
   );
 }
