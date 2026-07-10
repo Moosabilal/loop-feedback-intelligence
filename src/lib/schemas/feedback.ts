@@ -11,7 +11,7 @@ export const CHANNEL_ENUM = [
 export const createFeedbackSchema = z.object({
   content: z.string().min(10, 'Feedback content must be at least 10 characters long.'),
   channel: z.enum(CHANNEL_ENUM, {
-    message: 'Invalid channel selected',
+    error: 'Invalid channel selected',
   }),
 });
 
