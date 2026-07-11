@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const CHANNEL_ENUM = [
-  'Email',
-  'In-App',
   'Support Ticket',
-  'Social Media',
-  'App Store',
+  'App-Store Review',
+  'NPS/CSAT Survey',
+  'Sales Call Note',
+  'Community/Social Post',
 ] as const;
 
 export const createFeedbackSchema = z.object({
