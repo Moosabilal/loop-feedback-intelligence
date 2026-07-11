@@ -16,3 +16,7 @@ This document tracks our progress through the strict, step-gated build phases of
 - **Step 1.3 - Authentication (NextAuth)**: Configured NextAuth Credentials provider using a stateless JWT session strategy. Implemented strict server-side Zod validation and transactional Workspace + User creation via `AuthService`. Attached `role` and `workspaceId` to the session JWT for multi-tenant RBAC. Secured routes using Next.js middleware and implemented cinematic UI for `/login` and `/signup`.
 - **Step 1.4 - Workspaces + RBAC Foundation**: Built `TenantScopedRepository` base class guaranteeing workspace isolation across domain repos. Implemented `AuthorizationService` for strict server-side role enforcement (returning 403 Forbidden). Built the admin-only member invite flow (`AuthService.inviteMember`) and `/settings/members` dashboard view.
 - **Step 1.5 - Basic Feedback CRUD (Milestone 1)**: Built Feedback CRUD, enforced channels via Zod enum, restricted POST to ADMIN/ANALYST via AuthorizationService, implemented cinematic Inbox UI, and added a reusable ConfirmModal for logout. Milestone 1 verified.
+
+## Phase 2: Core Data Workflows
+
+- **Step 2.1 - CSV Bulk Upload**: Implemented bulk upload via `papaparse` on the client, validated on the server with Zod. Strictly mapped headers, enforced a `<5MB` / `<5,000` rows limit, injected `workspaceId` server-side, and built a cinematic drag-and-drop modal with template generation and per-row error reporting. Made `prisma/seed.ts` idempotent.
