@@ -6,6 +6,16 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Starting seed...');
 
+  console.log('Cleaning up existing data...');
+  // Delete in reverse dependency order
+  await prisma.embedding.deleteMany();
+  await prisma.feedbackTheme.deleteMany();
+  await prisma.theme.deleteMany();
+  await prisma.feedback.deleteMany();
+  await prisma.report.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.workspace.deleteMany();
+
   // 1. Create a Demo Workspace
   const workspace = await prisma.workspace.create({
     data: {
