@@ -41,10 +41,10 @@ export function ConfirmModal({
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[#13132B] border border-white/10 rounded-2xl shadow-2xl p-6 z-50 overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none" />
-            
+
             <h2 className="text-xl font-semibold text-white mb-2 relative">{title}</h2>
             <p className="text-gray-400 text-sm mb-6 relative leading-relaxed">{message}</p>
-            
+
             <div className="flex justify-end gap-3 relative">
               <button
                 type="button"
