@@ -29,4 +29,20 @@ export class FeedbackRepository extends TenantScopedRepository {
       take,
     });
   }
+
+  /**
+   * Bulk creates feedback entries scoped to the workspace.
+   */
+  async createMany(data: CreateFeedbackInput[]) {
+    return prisma.feedback.createMany({
+      data: data.map((item) => ({
+        content: item.content,
+        channel: item.channel,
+        status: FeedbackStatus.NEW,
+        workspaceId: this.workspaceId,
+        featureArea: item.featureArea,
+        createdAt: item.createdAt || new Date(),
+      })),
+    });
+  }
 }

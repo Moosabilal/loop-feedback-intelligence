@@ -19,6 +19,7 @@
     "framer-motion": "^12.42.2",
     "next": "14.2.35",
     "next-auth": "^4.24.14",
+    "papaparse": "^5.5.4",
     "prisma": "^5.22.0",
     "react": "^18",
     "react-dom": "^18",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
+    "@types/papaparse": "^5.5.2",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "bcryptjs": "^3.0.3",

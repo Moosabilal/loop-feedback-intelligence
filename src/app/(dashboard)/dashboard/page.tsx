@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { FeedbackCreateModal } from '../components/FeedbackCreateModal';
+import { CsvUploadModal } from '../components/CsvUploadModal';
 import { Role } from '@prisma/client';
 
 type FeedbackItem = {
@@ -17,7 +18,8 @@ export default function DashboardPage() {
   const { data: session } = useSession();
   const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
 
   const fetchFeedback = async () => {
     setIsLoading(true);
@@ -49,12 +51,20 @@ export default function DashboardPage() {
         </div>
 
         {canCreate && (
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)]"
-          >
-            + Log Feedback
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setIsCsvModalOpen(true)}
+              className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors border border-white/5"
+            >
+              Upload CSV
+            </button>
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+            >
+              + Log Feedback
+            </button>
+          </div>
         )}
       </div>
 
@@ -104,8 +114,13 @@ export default function DashboardPage() {
       </div>
 
       <FeedbackCreateModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={fetchFeedback}
+      />
+      <CsvUploadModal
+        isOpen={isCsvModalOpen}
+        onClose={() => setIsCsvModalOpen(false)}
         onSuccess={fetchFeedback}
       />
     </div>

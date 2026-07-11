@@ -13,6 +13,11 @@ export const createFeedbackSchema = z.object({
   channel: z.enum(CHANNEL_ENUM, {
     error: 'Invalid channel selected',
   }),
+  createdAt: z
+    .union([z.string(), z.date()])
+    .optional()
+    .transform((val) => (val ? new Date(val) : undefined)),
+  featureArea: z.string().optional(),
 });
 
 export type CreateFeedbackInput = z.infer<typeof createFeedbackSchema>;
