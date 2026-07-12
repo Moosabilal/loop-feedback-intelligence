@@ -20,3 +20,4 @@ This document tracks our progress through the strict, step-gated build phases of
 ## Phase 2: Core Data Workflows
 
 - **Step 2.1 - CSV Bulk Upload**: Implemented bulk upload via `papaparse` on the client, validated on the server with Zod. Strictly mapped headers, enforced a `<5MB` / `<5,000` rows limit, injected `workspaceId` server-side, and built a cinematic drag-and-drop modal with template generation and per-row error reporting. Made `prisma/seed.ts` idempotent.
+- **Step 2.2 - Channel Ingestion (Simulation)**: Implemented simulated integration ingestion. Created `POST /api/integrations/simulate` strictly scoped to ADMIN/ANALYST roles. Built a custom `FeedbackGenerator` utilizing sentence fragments and a `Set` to prevent duplicate generation. Added a sleek "Simulate Channel" dropdown to the Inbox UI, hidden from viewers.
