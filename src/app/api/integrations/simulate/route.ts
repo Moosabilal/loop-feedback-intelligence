@@ -13,15 +13,71 @@ const requestSchema = z.object({
   }),
 });
 
-const SIMULATION_TEMPLATES = [
-  'This is a simulated piece of feedback.',
-  'I am having trouble finding the settings menu.',
-  'Great experience so far, highly recommended!',
-  'The UI is a bit confusing on mobile devices.',
-  'Can you add an integration with Slack?',
-  'Performance has improved a lot since the last update.',
-  'I keep getting logged out randomly.',
-];
+const FRAGMENTS = {
+  subjects: [
+    'The new dashboard',
+    'The UI',
+    'The mobile app',
+    'Customer support',
+    'Pricing',
+    'The checkout process',
+    'Onboarding',
+    'The search feature',
+    'Exporting reports',
+  ],
+  verbs: ['is', 'feels', 'looks', 'seems', 'functions', 'runs', 'operates'],
+  adjectives: [
+    'incredible',
+    'confusing',
+    'fast',
+    'slow',
+    'intuitive',
+    'buggy',
+    'steep',
+    'smooth',
+    'clunky',
+    'fantastic',
+    'broken',
+  ],
+  suffixes: [
+    'these days.',
+    'since the last update.',
+    'on Android.',
+    'for small teams.',
+    'overall.',
+    'which is frustrating.',
+    'which is amazing.',
+    'compared to competitors.',
+  ],
+};
+
+type ChannelType = (typeof CHANNEL_ENUM)[number];
+
+function generateUniqueFeedback(count: number, channel: ChannelType) {
+  const generated = new Set<string>();
+  const rows = [];
+
+  while (rows.length < count) {
+    const subject = FRAGMENTS.subjects[Math.floor(Math.random() * FRAGMENTS.subjects.length)];
+    const verb = FRAGMENTS.verbs[Math.floor(Math.random() * FRAGMENTS.verbs.length)];
+    const adjective = FRAGMENTS.adjectives[Math.floor(Math.random() * FRAGMENTS.adjectives.length)];
+    const suffix = FRAGMENTS.suffixes[Math.floor(Math.random() * FRAGMENTS.suffixes.length)];
+
+    const content = `[Simulated] ${subject} ${verb} ${adjective} ${suffix}`;
+
+    if (!generated.has(content)) {
+      generated.add(content);
+      rows.push({
+        content,
+        channel,
+        featureArea: 'Simulated Ingestion',
+        createdAt: new Date(),
+      });
+    }
+  }
+
+  return rows;
+}
 
 export async function POST(req: Request) {
   try {
@@ -41,18 +97,9 @@ export async function POST(req: Request) {
     const workspaceId = session!.user.workspaceId;
     const repo = new FeedbackRepository(workspaceId);
 
-    // Generate 3 random feedback items
+    // Generate 3 random, unique feedback items
     const count = 3;
-    const simulatedRows = Array.from({ length: count }).map(() => {
-      const randomContent =
-        SIMULATION_TEMPLATES[Math.floor(Math.random() * SIMULATION_TEMPLATES.length)];
-      return {
-        content: `[Simulated] ${randomContent}`,
-        channel,
-        featureArea: 'Simulated Ingestion',
-        createdAt: new Date(),
-      };
-    });
+    const simulatedRows = generateUniqueFeedback(count, channel);
 
     await repo.createMany(simulatedRows);
 
