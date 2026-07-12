@@ -1,5 +1,7 @@
 import { FeedbackRepository } from '../repositories/FeedbackRepository';
 import { CreateFeedbackInput, createFeedbackSchema } from '../schemas/feedback';
+import { Role, FeedbackStatus } from '@prisma/client';
+import { AuthorizationService } from '../services/AuthorizationService';
 
 export class FeedbackService {
   constructor(private readonly workspaceId: string) {}
@@ -18,11 +20,20 @@ export class FeedbackService {
   }
 
   /**
-   * Retrieves all feedback for the current workspace.
+   * Retrieves paginated feedback for the current workspace.
    */
-  async getFeedback(skip = 0, take = 50) {
+  async getFeedback(skip = 0, take = 50, search?: string) {
     const repo = new FeedbackRepository(this.workspaceId);
-    return repo.findMany(skip, take);
+    return repo.findMany(skip, take, search);
+  }
+
+  /**
+   * Updates a feedback's status, ensuring the user has triage privileges.
+   */
+  async updateFeedbackStatus(id: string, status: FeedbackStatus, session: any) {
+    AuthorizationService.requireRole(session, [Role.ADMIN, Role.ANALYST]);
+    const repo = new FeedbackRepository(this.workspaceId);
+    return repo.updateStatus(id, status);
   }
 
   /**

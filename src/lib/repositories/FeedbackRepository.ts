@@ -19,14 +19,45 @@ export class FeedbackRepository extends TenantScopedRepository {
   }
 
   /**
-   * Retrieves all feedback items for the workspace, ordered by newest first.
+   * Retrieves paginated feedback items, optionally filtered by search,
+   * and returns both the items and the total count.
    */
-  async findMany(skip = 0, take = 50) {
-    return prisma.feedback.findMany({
-      where: this.tenantFilter(),
-      orderBy: { createdAt: 'desc' },
-      skip,
-      take,
+  async findMany(skip = 0, take = 50, search?: string) {
+    const whereClause = {
+      ...this.tenantFilter(),
+      ...(search ? { content: { contains: search, mode: 'insensitive' as const } } : {}),
+    };
+
+    const [items, total] = await Promise.all([
+      prisma.feedback.findMany({
+        where: whereClause,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+      }),
+      prisma.feedback.count({
+        where: whereClause,
+      }),
+    ]);
+
+    return { items, total };
+  }
+
+  /**
+   * Updates the status of a specific feedback item, scoping strictly to this workspace.
+   */
+  async updateStatus(id: string, status: FeedbackStatus) {
+    const existing = await prisma.feedback.findFirst({
+      where: { id, workspaceId: this.workspaceId },
+    });
+
+    if (!existing) {
+      throw new Error('Feedback not found or unauthorized.');
+    }
+
+    return prisma.feedback.update({
+      where: { id },
+      data: { status },
     });
   }
 
