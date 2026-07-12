@@ -71,7 +71,13 @@ async function main() {
   console.log(`Created ${createdThemes.length} Themes`);
 
   // 4. Generate 120+ Feedback Items
-  const channels = ['Support Ticket', 'App-Store Review', 'NPS/CSAT Survey', 'Sales Call Note', 'Community/Social Post'];
+  const channels = [
+    'Support Ticket',
+    'App-Store Review',
+    'NPS/CSAT Survey',
+    'Sales Call Note',
+    'Community/Social Post',
+  ];
   const featureAreas = ['Dashboard', 'Checkout', 'Mobile App', 'Settings', 'Reporting'];
   const sentiments = [Sentiment.POSITIVE, Sentiment.NEUTRAL, Sentiment.NEGATIVE];
   const statuses = [FeedbackStatus.NEW, FeedbackStatus.REVIEWED, FeedbackStatus.ACTIONED];

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { FeedbackCreateModal } from '../components/FeedbackCreateModal';
 import { CsvUploadModal } from '../components/CsvUploadModal';
+import { SimulateChannelDropdown } from '../components/SimulateChannelDropdown';
 import { Role } from '@prisma/client';
 
 type FeedbackItem = {
@@ -52,6 +53,7 @@ export default function DashboardPage() {
 
         {canCreate && (
           <div className="flex gap-3">
+            <SimulateChannelDropdown onSuccess={fetchFeedback} />
             <button
               onClick={() => setIsCsvModalOpen(true)}
               className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors border border-white/5"
