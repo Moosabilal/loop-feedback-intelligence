@@ -37,6 +37,14 @@ export class FeedbackService {
   }
 
   /**
+   * Retrieves dashboard statistics and chart data.
+   */
+  async getDashboardStats() {
+    const repo = new FeedbackRepository(this.workspaceId);
+    return repo.getDashboardStats();
+  }
+
+  /**
    * Bulk creates feedback entries, validating each row and returning a summary.
    */
   async bulkCreateFeedback(rows: any[]) {
