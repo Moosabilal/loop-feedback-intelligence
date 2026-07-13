@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CHANNEL_ENUM } from '@/lib/schemas/feedback';
 
+import { useToast } from '@/lib/contexts/ToastContext';
+
 interface SimulateChannelDropdownProps {
   onSuccess: () => void;
 }
@@ -11,6 +13,7 @@ interface SimulateChannelDropdownProps {
 export function SimulateChannelDropdown({ onSuccess }: SimulateChannelDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSimulating, setIsSimulating] = useState(false);
+  const { toast } = useToast();
 
   const handleSimulate = async (channel: string) => {
     setIsSimulating(true);
@@ -29,7 +32,7 @@ export function SimulateChannelDropdown({ onSuccess }: SimulateChannelDropdownPr
 
       onSuccess();
     } catch (err: any) {
-      alert(`Simulation failed: ${err.message}`);
+      toast({ message: `Simulation failed: ${err.message}`, type: 'error' });
     } finally {
       setIsSimulating(false);
     }

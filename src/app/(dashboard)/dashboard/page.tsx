@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { FeedbackCreateModal } from '../components/FeedbackCreateModal';
 import { CsvUploadModal } from '../components/CsvUploadModal';
 import { SimulateChannelDropdown } from '../components/SimulateChannelDropdown';
+import { useToast } from '@/lib/contexts/ToastContext';
 import { Role, FeedbackStatus } from '@prisma/client';
 
 type FeedbackItem = {
@@ -17,6 +18,7 @@ type FeedbackItem = {
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const { toast } = useToast();
   const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -85,7 +87,7 @@ export default function DashboardPage() {
         throw new Error(error.error || 'Failed to update status');
       }
     } catch (error: any) {
-      alert(`Error updating status: ${error.message}`);
+      toast({ message: `Error updating status: ${error.message}`, type: 'error' });
       // Rollback on failure
       setFeedback(previousFeedback);
     }
