@@ -9,6 +9,13 @@
  * const feedbackService = container.getFeedbackService();
  */
 
+import { FeedbackRepository } from './repositories/FeedbackRepository';
+import { AnthropicAIProvider } from './services/ai/AnthropicAIProvider';
+import { IAIProvider } from './interfaces/IAIProvider';
+
+// A simple manual DI container for shared, stateless server-side singletons
+export const aiProvider: IAIProvider = new AnthropicAIProvider();
+
 class Container {
   // private feedbackRepository: IFeedbackRepository;
   // private feedbackService: FeedbackService;
