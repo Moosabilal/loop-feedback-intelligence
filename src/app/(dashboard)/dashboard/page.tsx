@@ -18,6 +18,11 @@ type FeedbackItem = {
   content: string;
   channel: string;
   status: FeedbackStatus;
+  sentiment: string | null;
+  sentimentScore: number | null;
+  featureArea: string | null;
+  rationale: string | null;
+  themes: { theme: { name: string } }[];
   createdAt: string;
 };
 
@@ -30,6 +35,8 @@ export default function DashboardPage() {
   const [isStatsLoading, setIsStatsLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
+  const [isClassifyingBatch, setIsClassifyingBatch] = useState(false);
+  const [reclassifyingIds, setReclassifyingIds] = useState<Set<string>>(new Set());
 
   // Pagination & Search State
   const [page, setPage] = useState(1);
@@ -123,6 +130,44 @@ export default function DashboardPage() {
     }
   };
 
+  const handleClassifyBatch = async () => {
+    if (!canEdit) return;
+    setIsClassifyingBatch(true);
+    try {
+      const res = await fetch('/api/feedback/classify-batch', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to batch classify');
+      toast({ message: data.message, type: 'success' });
+      refreshAll();
+    } catch (error: any) {
+      toast({ message: error.message, type: 'error' });
+    } finally {
+      setIsClassifyingBatch(false);
+    }
+  };
+
+  const handleReclassify = async (id: string) => {
+    if (!canEdit) return;
+    setReclassifyingIds((prev) => new Set(prev).add(id));
+    try {
+      const res = await fetch(`/api/feedback/${id}/classify`, { method: 'POST' });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to re-classify');
+      }
+      toast({ message: 'Feedback successfully re-classified', type: 'success' });
+      refreshAll();
+    } catch (error: any) {
+      toast({ message: error.message, type: 'error' });
+    } finally {
+      setReclassifyingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
+  };
+
   return (
     <div className="p-8 max-w-7xl mx-auto flex flex-col h-[calc(100vh-64px)]">
       <div className="flex items-center justify-between mb-6">
@@ -133,6 +178,25 @@ export default function DashboardPage() {
 
         {canEdit && (
           <div className="flex gap-3">
+            <button
+              onClick={handleClassifyBatch}
+              disabled={isClassifyingBatch}
+              className="px-5 py-2.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 text-purple-300 rounded-xl font-medium transition-colors border border-purple-500/30 flex items-center gap-2 disabled:opacity-50"
+            >
+              {isClassifyingBatch ? (
+                <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              )}
+              Classify Backlog
+            </button>
             <SimulateChannelDropdown onSuccess={refreshAll} />
             <button
               onClick={() => setIsCsvModalOpen(true)}
@@ -282,6 +346,62 @@ export default function DashboardPage() {
                           <p className="text-white text-base leading-relaxed mb-3">
                             {item.content}
                           </p>
+
+                          {/* AI Metadata Display */}
+                          <div className="flex flex-wrap items-center gap-2 mb-4">
+                            {!item.sentiment ? (
+                              <span className="px-2.5 py-1 rounded-md bg-yellow-500/20 text-yellow-400 text-xs font-medium border border-yellow-500/30 flex items-center gap-1">
+                                <svg
+                                  className="w-3 h-3"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                                  />
+                                </svg>
+                                Needs Classification
+                              </span>
+                            ) : (
+                              <>
+                                <span
+                                  className={`px-2.5 py-1 rounded-md text-xs font-medium border flex items-center gap-1 ${
+                                    item.sentiment === 'POSITIVE'
+                                      ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                                      : item.sentiment === 'NEGATIVE'
+                                        ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                                        : 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+                                  }`}
+                                >
+                                  {item.sentiment} ({item.sentimentScore?.toFixed(2)})
+                                </span>
+                                {item.featureArea && (
+                                  <span className="px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-300 text-xs font-medium border border-purple-500/20">
+                                    {item.featureArea}
+                                  </span>
+                                )}
+                                {item.themes?.map((t, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="px-2 py-1 rounded-md bg-white/5 text-gray-300 text-xs border border-white/10"
+                                  >
+                                    #{t.theme.name}
+                                  </span>
+                                ))}
+                              </>
+                            )}
+
+                            {item.rationale && (
+                              <p className="text-gray-400 text-xs italic w-full mt-1">
+                                &quot;{item.rationale}&quot;
+                              </p>
+                            )}
+                          </div>
+
                           <div className="flex items-center gap-3 text-xs font-medium">
                             <span className="px-2.5 py-1 rounded-md bg-white/10 text-gray-300">
                               {item.channel}
@@ -336,6 +456,33 @@ export default function DashboardPage() {
                                 year: 'numeric',
                               })}
                             </span>
+
+                            {canEdit && (
+                              <button
+                                onClick={() => handleReclassify(item.id)}
+                                disabled={reclassifyingIds.has(item.id)}
+                                className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-purple-400 hover:bg-purple-500/10 hover:text-purple-300 disabled:opacity-50 transition-colors border border-transparent hover:border-purple-500/20"
+                              >
+                                {reclassifyingIds.has(item.id) ? (
+                                  <div className="w-3 h-3 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <svg
+                                    className="w-3 h-3"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                    />
+                                  </svg>
+                                )}
+                                Re-classify
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>

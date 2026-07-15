@@ -34,6 +34,11 @@ export class FeedbackRepository extends TenantScopedRepository {
         orderBy: { createdAt: 'desc' },
         skip,
         take,
+        include: {
+          themes: {
+            include: { theme: true },
+          },
+        },
       }),
       prisma.feedback.count({
         where: whereClause,

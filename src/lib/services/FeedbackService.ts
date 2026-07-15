@@ -3,11 +3,14 @@ import { CreateFeedbackInput, createFeedbackSchema } from '../schemas/feedback';
 import { Role, FeedbackStatus } from '@prisma/client';
 import { AuthorizationService } from '../services/AuthorizationService';
 
+import { ClassificationService } from './ClassificationService';
+import { aiProvider } from '../container';
+
 export class FeedbackService {
   constructor(private readonly workspaceId: string) {}
 
   /**
-   * Validates the payload and creates a new feedback entry.
+   * Validates the payload, creates a new feedback entry, and auto-classifies it.
    */
   async createFeedback(input: CreateFeedbackInput) {
     const parsed = createFeedbackSchema.safeParse(input);
@@ -16,7 +19,18 @@ export class FeedbackService {
     }
 
     const repo = new FeedbackRepository(this.workspaceId);
-    return repo.create(parsed.data);
+    const feedback = await repo.create(parsed.data);
+
+    // Auto-classify on ingestion
+    try {
+      const classificationSvc = new ClassificationService(this.workspaceId, aiProvider);
+      await classificationSvc.classifyFeedback(feedback.id);
+    } catch (err) {
+      console.error('Failed to auto-classify new feedback:', err);
+      // We don't fail the creation if classification fails. It stays unclassified (flagged for review).
+    }
+
+    return feedback;
   }
 
   /**
