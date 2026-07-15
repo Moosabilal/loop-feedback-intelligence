@@ -11,10 +11,23 @@
 
 import { FeedbackRepository } from './repositories/FeedbackRepository';
 import { AnthropicAIProvider } from './services/ai/AnthropicAIProvider';
+import { GoogleAIProvider } from './services/ai/GoogleAIProvider';
 import { IAIProvider } from './interfaces/IAIProvider';
 
+const initializeProvider = (): IAIProvider => {
+  const provider = process.env.AI_PROVIDER || 'google'; // Default to google as fallback for now
+
+  if (provider === 'anthropic') {
+    return new AnthropicAIProvider();
+  } else if (provider === 'google') {
+    return new GoogleAIProvider();
+  } else {
+    throw new Error(`Unsupported AI_PROVIDER: ${provider}`);
+  }
+};
+
 // A simple manual DI container for shared, stateless server-side singletons
-export const aiProvider: IAIProvider = new AnthropicAIProvider();
+export const aiProvider: IAIProvider = initializeProvider();
 
 class Container {
   // private feedbackRepository: IFeedbackRepository;
