@@ -24,14 +24,17 @@ export class GoogleAIProvider implements IAIProvider {
     }
 
     this.client = new GoogleGenerativeAI(apiKey);
-    // Use gemini-flash-latest as the default fast/cheap model
-    this.model = this.client.getGenerativeModel({ model: 'gemini-flash-latest' });
+    // Use gemini-3.1-flash-lite because its free tier offers 500 requests/day and 15 RPM
+    // (a 25x improvement over standard Flash's 20 requests/day limit).
+    // This provides sufficient daily quota headroom for testing and backfilling
+    // during the temporary Anthropic-key-pending period.
+    this.model = this.client.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
     this.embeddingModel = this.client.getGenerativeModel({ model: 'gemini-embedding-2' });
   }
 
   async generateText(prompt: string, systemInstruction?: string): Promise<string> {
     const modelInstance = systemInstruction
-      ? this.client.getGenerativeModel({ model: 'gemini-flash-latest', systemInstruction })
+      ? this.client.getGenerativeModel({ model: 'gemini-3.1-flash-lite', systemInstruction })
       : this.model;
 
     const result = await modelInstance.generateContent(prompt);
