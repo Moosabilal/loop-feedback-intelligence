@@ -19,10 +19,7 @@ export async function POST(req: Request) {
     // Process a chunk of up to 15 unclassified items
     const result = await classificationSvc.classifyBatch(15);
 
-    return NextResponse.json(
-      { message: `Classified ${result.classified}, failed ${result.failed}`, ...result },
-      { status: 200 }
-    );
+    return NextResponse.json(result, { status: 200 });
   } catch (error: any) {
     console.error('Batch classification failed:', error);
     const status = error.message.includes('Forbidden') ? 403 : 500;

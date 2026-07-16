@@ -169,7 +169,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto flex flex-col h-[calc(100vh-64px)]">
+    <div className="p-8 max-w-7xl mx-auto flex flex-col min-h-[calc(100vh-64px)]">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Feedback Inbox</h1>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
           onLogFeedback={() => setIsCreateModalOpen(true)}
         />
       ) : (
-        <div className="flex flex-col gap-6 flex-1 min-h-0">
+        <div className="flex flex-col gap-6 flex-1">
           {/* Top Row: Stat Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard
@@ -302,7 +302,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Bottom Row: Inbox */}
-          <div className="flex flex-col flex-1 min-h-[400px]">
+          <div className="flex flex-col mt-2">
             <div className="mb-4 relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <svg
@@ -328,7 +328,7 @@ export default function DashboardPage() {
               />
             </div>
 
-            <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm flex flex-col">
+            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm flex flex-col">
               {isLoading && feedback.length === 0 ? (
                 <div className="flex-1 p-12 flex items-center justify-center text-gray-400">
                   Loading feedback...
@@ -338,7 +338,7 @@ export default function DashboardPage() {
                   No feedback found.
                 </div>
               ) : (
-                <div className="flex-1 overflow-y-auto divide-y divide-white/10">
+                <div className="divide-y divide-white/10">
                   {feedback.map((item) => (
                     <div key={item.id} className="p-6 hover:bg-white/5 transition-colors group">
                       <div className="flex items-start justify-between gap-4">

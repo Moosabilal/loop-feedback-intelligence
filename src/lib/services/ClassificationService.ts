@@ -27,6 +27,13 @@ You are an expert product analyst classifying customer feedback.
 Analyze the provided feedback text and classify its sentiment, calculate a sentiment score (-1.0 to 1.0), identify the primary feature area, and extract key themes.
 Provide a concise, one-line rationale for your classification.
 
+CRITICAL INSTRUCTIONS FOR SENTIMENT:
+You MUST set "sentiment" strictly to one of the following exactly (case-sensitive):
+- "POSITIVE"
+- "NEUTRAL"
+- "NEGATIVE"
+Any other value (like "Mixed", "Positive", "Neutral", "Negative", etc.) will cause a system crash.
+
 CRITICAL THEME REUSE INSTRUCTION:
 Below is a list of themes currently in use for this workspace. 
 Whenever possible, you MUST reuse themes from this exact list rather than inventing new synonyms. Only create a new theme if absolutely no existing theme applies.
@@ -106,20 +113,39 @@ ${themeNames || 'None'}
 
     let classified = 0;
     let failed = 0;
+    let quotaHit = false;
 
     for (const fb of unclassified) {
       try {
         await this.classifyFeedback(fb.id);
         classified++;
-      } catch (err) {
+      } catch (err: any) {
         console.error(`Failed to classify feedback ${fb.id}:`, err);
         failed++;
+
+        // Graceful early-exit on Google Gemini Free Tier daily limits or other severe 429s
+        const msg = err.message || '';
+        if (
+          msg.includes('429') ||
+          msg.includes('GenerateRequestsPerDayPerProjectPerModel-FreeTier') ||
+          msg.includes('limit: 20') ||
+          msg.includes('quota')
+        ) {
+          console.error('AI quota limit reached. Stopping batch.');
+          quotaHit = true;
+          break; // Stop processing further items
+        }
       }
 
-      // Delay of 1000ms between calls to respect free-tier Gemini rate limits (~15 RPM)
+      // Delay of 1000ms between calls to respect free-tier Gemini rate limits
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
-    return { classified, failed, total: unclassified.length };
+    let message = `Classified ${classified}, failed ${failed}.`;
+    if (quotaHit) {
+      message = `Daily AI quota reached — try again tomorrow. Successfully classified ${classified} items before stopping.`;
+    }
+
+    return { classified, failed, total: unclassified.length, quotaHit, message };
   }
 }
