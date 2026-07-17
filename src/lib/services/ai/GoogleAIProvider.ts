@@ -10,6 +10,21 @@ import { IAIProvider } from '../../interfaces/IAIProvider';
  * Once the Anthropic key is available, switch AI_PROVIDER=anthropic in the environment
  * to seamlessly return to the original implementation.
  */
+
+// Global rate limiter state to ensure max 15 RPM (1 request every 4 seconds)
+// This is shared across all instances in this Node process.
+let lastCallTime = 0;
+const MIN_INTERVAL_MS = 4100; // 4.1 seconds to be safe
+
+async function enforceRateLimit() {
+  const now = Date.now();
+  const timeSinceLastCall = now - lastCallTime;
+  if (timeSinceLastCall < MIN_INTERVAL_MS) {
+    const delay = MIN_INTERVAL_MS - timeSinceLastCall;
+    await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+  lastCallTime = Date.now();
+}
 export class GoogleAIProvider implements IAIProvider {
   private client: GoogleGenerativeAI;
   private model: GenerativeModel;
@@ -24,17 +39,18 @@ export class GoogleAIProvider implements IAIProvider {
     }
 
     this.client = new GoogleGenerativeAI(apiKey);
-    // Use gemini-3.1-flash-lite because its free tier offers 500 requests/day and 15 RPM
-    // (a 25x improvement over standard Flash's 20 requests/day limit).
+    // Use gemini-1.5-flash (Flash Lite equivalent) because its free tier offers higher daily limits and 15 RPM.
     // This provides sufficient daily quota headroom for testing and backfilling
     // during the temporary Anthropic-key-pending period.
-    this.model = this.client.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
+    this.model = this.client.getGenerativeModel({ model: 'gemini-1.5-flash' });
     this.embeddingModel = this.client.getGenerativeModel({ model: 'gemini-embedding-2' });
   }
 
   async generateText(prompt: string, systemInstruction?: string): Promise<string> {
+    await enforceRateLimit();
+
     const modelInstance = systemInstruction
-      ? this.client.getGenerativeModel({ model: 'gemini-3.1-flash-lite', systemInstruction })
+      ? this.client.getGenerativeModel({ model: 'gemini-1.5-flash', systemInstruction })
       : this.model;
 
     const result = await modelInstance.generateContent(prompt);
@@ -67,15 +83,29 @@ CRITICAL: You must output ONLY valid, raw JSON. Do not include any explanations,
       }
 
       // Parse and validate
-      const parsed = JSON.parse(cleaned);
-      return schema.parse(parsed);
+      let parsed;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch (parseError) {
+        console.error('JSON Parse Error. Raw response was:', textResponse);
+        throw parseError;
+      }
+
+      try {
+        return schema.parse(parsed);
+      } catch (zodError: any) {
+        console.error('Zod Validation Error. Raw response was:', textResponse);
+        throw new Error(
+          `Zod Validation Error: ${zodError.message}\n\nRAW_AI_RESPONSE:\n${textResponse}`
+        );
+      }
     };
 
     try {
       return await attemptGeneration();
     } catch (error) {
       console.warn('First attempt at structured generation failed. Retrying once...', error);
-      // Retry once on failure (either JSON parse error or Zod validation error)
+      // Retry once on failure
       try {
         return await attemptGeneration();
       } catch (retryError) {

@@ -18,6 +18,8 @@ export function FeedbackCreateModal({ isOpen, onClose, onSuccess }: FeedbackCrea
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return; // Guard against double-clicks
+
     setError('');
     setIsSubmitting(true);
 

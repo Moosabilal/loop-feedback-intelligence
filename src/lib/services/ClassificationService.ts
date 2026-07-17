@@ -137,8 +137,7 @@ ${themeNames || 'None'}
         }
       }
 
-      // Delay of 1000ms between calls to respect free-tier Gemini rate limits
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Delay removed; GoogleAIProvider now handles global rate limiting to 15 RPM
     }
 
     let message = `Classified ${classified}, failed ${failed}.`;
