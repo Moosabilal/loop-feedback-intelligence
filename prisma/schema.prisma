@@ -44,16 +44,16 @@ model Workspace {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
+  id           String    @id @default(cuid())
+  email        String    @unique
   passwordHash String
   name         String?
-  role         Role     @default(VIEWER)
+  role         Role      @default(VIEWER)
   workspaceId  String
   workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Feedback {
@@ -65,40 +65,40 @@ model Feedback {
   status         FeedbackStatus @default(NEW)
   featureArea    String?
   rationale      String?
-  
-  workspaceId    String
-  workspace      Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  themes         FeedbackTheme[]
-  embeddings     Embedding[]
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  themes     FeedbackTheme[]
+  embeddings Embedding[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Theme {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  feedbacks   FeedbackTheme[]
+  feedbacks FeedbackTheme[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([workspaceId, name])
 }
 
 model FeedbackTheme {
-  id          String   @id @default(cuid())
-  confidence  Float
+  id         String @id @default(cuid())
+  confidence Float
 
-  feedbackId  String
-  feedback    Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+  feedbackId String
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
 
-  themeId     String
-  theme       Theme    @relation(fields: [themeId], references: [id], onDelete: Cascade)
+  themeId String
+  theme   Theme  @relation(fields: [themeId], references: [id], onDelete: Cascade)
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -107,16 +107,16 @@ model FeedbackTheme {
 }
 
 model Embedding {
-  id          String   @id @default(cuid())
-  vector      Unsupported("vector(1536)")?
+  id     String                       @id @default(cuid())
+  vector Unsupported("vector(1536)")?
 
-  feedbackId  String
-  feedback    Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+  feedbackId String   @unique
+  feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Report {
@@ -126,9 +126,9 @@ model Report {
   dateRangeStart DateTime
   dateRangeEnd   DateTime
 
-  workspaceId    String
-  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
