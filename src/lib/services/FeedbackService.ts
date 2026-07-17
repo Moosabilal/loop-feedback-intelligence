@@ -21,12 +21,16 @@ export class FeedbackService {
     const repo = new FeedbackRepository(this.workspaceId);
     const feedback = await repo.create(parsed.data);
 
-    // Auto-classify on ingestion
+    // Auto-classify and embed on ingestion
     try {
       const classificationSvc = new ClassificationService(this.workspaceId, aiProvider);
       await classificationSvc.classifyFeedback(feedback.id);
+
+      const { AskLoopService } = require('./AskLoopService');
+      const askLoopSvc = new AskLoopService(this.workspaceId);
+      await askLoopSvc.embedFeedbackItem(feedback.id, feedback.content);
     } catch (err) {
-      console.error('Failed to auto-classify new feedback:', err);
+      console.error('Failed to auto-classify or embed new feedback:', err);
       // We don't fail the creation if classification fails. It stays unclassified (flagged for review).
     }
 
