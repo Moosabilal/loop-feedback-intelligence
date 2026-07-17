@@ -17,6 +17,7 @@ export function Sidebar({ user }: SidebarProps) {
 
   const navItems = [
     { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Ask LOOP', href: '/dashboard/ask' },
     { name: 'Members', href: '/settings/members' },
   ];
 
