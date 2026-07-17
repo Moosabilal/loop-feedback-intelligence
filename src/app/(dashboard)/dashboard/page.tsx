@@ -36,6 +36,7 @@ export default function DashboardPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
   const [isClassifyingBatch, setIsClassifyingBatch] = useState(false);
+  const [isEmbeddingBatch, setIsEmbeddingBatch] = useState(false);
   const [reclassifyingIds, setReclassifyingIds] = useState<Set<string>>(new Set());
   const [activeTheme, setActiveTheme] = useState<string | null>(null);
 
@@ -137,6 +138,26 @@ export default function DashboardPage() {
     }
   };
 
+  const handleEmbeddingBatch = async () => {
+    if (!canEdit) return;
+    setIsEmbeddingBatch(true);
+    try {
+      const res = await fetch('/api/feedback/embed-batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ limit: 50 }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to backfill embeddings');
+      toast({ message: data.message, type: 'success' });
+      refreshAll();
+    } catch (error: any) {
+      toast({ message: error.message, type: 'error' });
+    } finally {
+      setIsEmbeddingBatch(false);
+    }
+  };
+
   const handleClassifyBatch = async () => {
     if (!canEdit) return;
     setIsClassifyingBatch(true);
@@ -203,6 +224,20 @@ export default function DashboardPage() {
                 </svg>
               )}
               Classify Backlog
+            </button>
+            <button
+              onClick={handleEmbeddingBatch}
+              disabled={isEmbeddingBatch}
+              className="px-5 py-2.5 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 text-blue-300 rounded-xl font-medium transition-colors border border-blue-500/30 flex items-center gap-2 disabled:opacity-50"
+            >
+              {isEmbeddingBatch ? (
+                <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              )}
+              Backfill Embeddings
             </button>
             <SimulateChannelDropdown onSuccess={refreshAll} />
             <button

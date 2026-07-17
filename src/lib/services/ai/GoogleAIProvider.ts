@@ -45,7 +45,7 @@ export class GoogleAIProvider implements IAIProvider {
     // This provides sufficient daily quota headroom for testing and backfilling
     // during the temporary Anthropic-key-pending period.
     this.model = this.client.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
-    this.embeddingModel = this.client.getGenerativeModel({ model: 'gemini-embedding-2' });
+    this.embeddingModel = this.client.getGenerativeModel({ model: 'text-embedding-004' });
   }
 
   async generateText(prompt: string, systemInstruction?: string): Promise<string> {
