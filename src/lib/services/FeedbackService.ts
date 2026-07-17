@@ -36,9 +36,9 @@ export class FeedbackService {
   /**
    * Retrieves paginated feedback for the current workspace.
    */
-  async getFeedback(skip = 0, take = 50, search?: string) {
+  async getFeedback(skip = 0, take = 50, search?: string, theme?: string) {
     const repo = new FeedbackRepository(this.workspaceId);
-    return repo.findMany(skip, take, search);
+    return repo.findMany(skip, take, search, theme);
   }
 
   /**

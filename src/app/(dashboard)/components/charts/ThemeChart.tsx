@@ -1,12 +1,23 @@
 'use client';
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 interface ThemeChartProps {
   data: { name: string; count: number }[];
+  activeTheme?: string | null;
+  onThemeClick?: (theme: string) => void;
 }
 
-export function ThemeChart({ data }: ThemeChartProps) {
+export function ThemeChart({ data, activeTheme, onThemeClick }: ThemeChartProps) {
   return (
     <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm h-[300px] flex flex-col">
       <h3 className="text-white font-semibold mb-4 tracking-tight">Top Themes</h3>
@@ -53,11 +64,30 @@ export function ThemeChart({ data }: ThemeChartProps) {
             />
             <Bar
               dataKey="count"
-              fill="#6366f1"
               radius={[0, 4, 4, 0]}
               barSize={20}
               animationDuration={1500}
-            />
+              onClick={(data: any) => data?.name && onThemeClick?.(data.name)}
+              className={onThemeClick ? 'cursor-pointer transition-colors' : ''}
+            >
+              {data.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={
+                    activeTheme === entry.name
+                      ? '#a8a29e' /* distinct visual for active */
+                      : '#6366f1'
+                  }
+                  className={
+                    activeTheme === entry.name
+                      ? 'opacity-100'
+                      : activeTheme
+                        ? 'opacity-50'
+                        : 'opacity-100'
+                  }
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>

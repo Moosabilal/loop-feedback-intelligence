@@ -37,6 +37,7 @@ export default function DashboardPage() {
   const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
   const [isClassifyingBatch, setIsClassifyingBatch] = useState(false);
   const [reclassifyingIds, setReclassifyingIds] = useState<Set<string>>(new Set());
+  const [activeTheme, setActiveTheme] = useState<string | null>(null);
 
   // Pagination & Search State
   const [page, setPage] = useState(1);
@@ -53,6 +54,11 @@ export default function DashboardPage() {
     return () => clearTimeout(handler);
   }, [search]);
 
+  // Reset pagination when theme changes
+  useEffect(() => {
+    setPage(1);
+  }, [activeTheme]);
+
   const fetchFeedback = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -60,6 +66,7 @@ export default function DashboardPage() {
         page: page.toString(),
         limit: '20',
         ...(debouncedSearch ? { search: debouncedSearch } : {}),
+        ...(activeTheme ? { theme: activeTheme } : {}),
       });
       const res = await fetch(`/api/feedback?${params.toString()}`);
       const data = await res.json();
@@ -72,7 +79,7 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [page, debouncedSearch]);
+  }, [page, debouncedSearch, activeTheme]);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -248,7 +255,6 @@ export default function DashboardPage() {
             <StatCard
               title="Negative Sentiment"
               value={`${statsData?.stats?.pctNegative || 0}%`}
-              subtitle="Mocked"
               icon={
                 <svg
                   className="w-5 h-5 text-red-400"
@@ -297,35 +303,112 @@ export default function DashboardPage() {
               <SentimentChart data={statsData?.sentiment || []} />
             </div>
           </div>
-          <div className="grid grid-cols-1">
-            <ThemeChart data={statsData?.themes || []} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <ThemeChart
+                data={statsData?.themes || []}
+                activeTheme={activeTheme}
+                onThemeClick={(t) => setActiveTheme(activeTheme === t ? null : t)}
+              />
+            </div>
+            <div className="flex flex-col gap-4">
+              {/* Trending Themes Panel */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex-1 flex flex-col h-[300px]">
+                <h3 className="text-white font-semibold mb-4 tracking-tight flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-orange-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
+                  </svg>
+                  Trending This Week
+                </h3>
+                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar flex flex-col gap-3">
+                  {statsData?.trending?.map((t: any) => (
+                    <button
+                      key={t.themeId}
+                      onClick={() => setActiveTheme(activeTheme === t.name ? null : t.name)}
+                      className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all text-left ${
+                        activeTheme === t.name
+                          ? 'bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]'
+                          : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-white/5 hover:border-white/20'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="truncate max-w-[120px]">#{t.name}</span>
+                        <span className="text-gray-500 text-xs">({t.currentCount})</span>
+                      </div>
+                      {t.isNew ? (
+                        <span className="px-2 py-1 rounded-md text-[10px] uppercase font-bold bg-green-500/20 text-green-400 border border-green-500/30 whitespace-nowrap">
+                          🆕 New
+                        </span>
+                      ) : t.percentageGrowth && t.percentageGrowth > 0 ? (
+                        <span className="px-2 py-1 rounded-md text-[10px] uppercase font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30 whitespace-nowrap">
+                          🔥 +{Math.round(t.percentageGrowth)}%
+                        </span>
+                      ) : null}
+                    </button>
+                  ))}
+                  {(!statsData?.trending || statsData.trending.length === 0) && (
+                    <div className="text-sm text-gray-500 italic mt-4 text-center">
+                      No trending themes yet
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Bottom Row: Inbox */}
           <div className="flex flex-col mt-2">
-            <div className="mb-4 relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg
-                  className="h-5 w-5 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
+            <div className="mb-4 relative flex gap-3">
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg
+                    className="h-5 w-5 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search feedback..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3 bg-[#1A1A3A] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                />
               </div>
-              <input
-                type="text"
-                placeholder="Search feedback..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-[#1A1A3A] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
-              />
+              {activeTheme && (
+                <button
+                  onClick={() => setActiveTheme(null)}
+                  className="px-4 py-3 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-indigo-500/30 transition-colors whitespace-nowrap"
+                >
+                  <span>#{activeTheme}</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              )}
             </div>
 
             <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm flex flex-col">

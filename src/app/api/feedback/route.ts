@@ -12,16 +12,17 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized: No active session' }, { status: 401 });
     }
 
-    const { searchParams } = new URL(req.url);
+    const searchParams = new URL(req.url).searchParams;
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     // Hardcoded maximum limit of 100 to prevent abuse
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
     const search = searchParams.get('search') || undefined;
+    const theme = searchParams.get('theme') || undefined;
 
     const skip = (page - 1) * limit;
 
     const feedbackService = new FeedbackService(session.user.workspaceId);
-    const result = await feedbackService.getFeedback(skip, limit, search);
+    const result = await feedbackService.getFeedback(skip, limit, search, theme);
 
     return NextResponse.json(
       {
