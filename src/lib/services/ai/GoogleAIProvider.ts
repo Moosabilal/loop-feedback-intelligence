@@ -85,9 +85,22 @@ CRITICAL: You must output ONLY valid, raw JSON. Do not include any explanations,
       }
 
       // Parse and validate
-      let parsed;
+      let parsed: any;
       try {
         parsed = JSON.parse(cleaned);
+
+        // Defensive normalization for known snake_case variations
+        if (parsed && typeof parsed === 'object') {
+          if ('sentiment_score' in parsed && !('sentimentScore' in parsed)) {
+            parsed.sentimentScore = parsed.sentiment_score;
+          }
+          if ('primary_feature_area' in parsed && !('featureArea' in parsed)) {
+            parsed.featureArea = parsed.primary_feature_area;
+          }
+          if ('key_themes' in parsed && !('themes' in parsed)) {
+            parsed.themes = parsed.key_themes;
+          }
+        }
       } catch (parseError: any) {
         console.error('JSON Parse Error. Raw response was:', textResponse);
         throw new Error(

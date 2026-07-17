@@ -27,12 +27,18 @@ You are an expert product analyst classifying customer feedback.
 Analyze the provided feedback text and classify its sentiment, calculate a sentiment score (-1.0 to 1.0), identify the primary feature area, and extract key themes.
 Provide a concise, one-line rationale for your classification.
 
+CRITICAL INSTRUCTIONS FOR JSON SHAPE:
+You MUST respond with ONLY a JSON object matching EXACTLY this shape. Do NOT rename keys or use snake_case. Use exactly these camelCase keys:
+{
+  "sentiment": "POSITIVE" | "NEUTRAL" | "NEGATIVE",
+  "sentimentScore": <number between -1.0 and 1.0>,
+  "themes": ["theme1", "theme2"],
+  "featureArea": "<string>",
+  "rationale": "<one-line string>"
+}
+
 CRITICAL INSTRUCTIONS FOR SENTIMENT:
-You MUST set "sentiment" strictly to one of the following exactly (case-sensitive):
-- "POSITIVE"
-- "NEUTRAL"
-- "NEGATIVE"
-Any other value (like "Mixed", "Positive", "Neutral", "Negative", etc.) will cause a system crash.
+You MUST set "sentiment" strictly to one of the exact strings "POSITIVE", "NEUTRAL", or "NEGATIVE" (case-sensitive). Any other value will cause a system crash.
 
 CRITICAL THEME REUSE INSTRUCTION:
 Below is a list of themes currently in use for this workspace. 
@@ -114,14 +120,17 @@ ${themeNames || 'None'}
     let classified = 0;
     let failed = 0;
     let quotaHit = false;
+    let consecutiveFailures = 0;
 
     for (const fb of unclassified) {
       try {
         await this.classifyFeedback(fb.id);
         classified++;
+        consecutiveFailures = 0; // reset on success
       } catch (err: any) {
         console.error(`Failed to classify feedback ${fb.id}:`, err);
         failed++;
+        consecutiveFailures++;
 
         // Graceful early-exit on Google Gemini Free Tier daily limits or other severe 429s
         const msg = err.message || '';
@@ -135,6 +144,14 @@ ${themeNames || 'None'}
           quotaHit = true;
           break; // Stop processing further items
         }
+
+        // Circuit breaker: if we get 3 consecutive failures, stop to prevent massive timeouts
+        if (consecutiveFailures >= 3) {
+          console.error(
+            'Circuit breaker triggered: 3 consecutive failures. Stopping batch to prevent UI timeout.'
+          );
+          break;
+        }
       }
 
       // Delay removed; GoogleAIProvider now handles global rate limiting to 15 RPM
@@ -143,6 +160,8 @@ ${themeNames || 'None'}
     let message = `Classified ${classified}, failed ${failed}.`;
     if (quotaHit) {
       message = `Daily AI quota reached — try again tomorrow. Successfully classified ${classified} items before stopping.`;
+    } else if (consecutiveFailures >= 3) {
+      message = `Classified ${classified}. Stopped early after 3 consecutive failures. Check server logs.`;
     }
 
     return { classified, failed, total: unclassified.length, quotaHit, message };
