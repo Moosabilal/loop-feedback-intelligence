@@ -22,11 +22,19 @@ export class FeedbackRepository extends TenantScopedRepository {
    * Retrieves paginated feedback items, optionally filtered by search,
    * and returns both the items and the total count.
    */
-  async findMany(skip = 0, take = 50, search?: string) {
-    const whereClause = {
+  async findMany(skip = 0, take = 50, search?: string, themeName?: string) {
+    const whereClause: any = {
       ...this.tenantFilter(),
       ...(search ? { content: { contains: search, mode: 'insensitive' as const } } : {}),
     };
+
+    if (themeName) {
+      whereClause.themes = {
+        some: {
+          theme: { name: themeName },
+        },
+      };
+    }
 
     const [items, total] = await Promise.all([
       prisma.feedback.findMany({
@@ -66,16 +74,20 @@ export class FeedbackRepository extends TenantScopedRepository {
     });
   }
 
-  /**
-   * Generates dashboard stats, mixing real aggregations for volume/counts
-   * and placeholder mock data for AI-dependent fields (sentiment, themes).
-   */
   async getDashboardStats() {
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
 
-    const [totalFeedback, newThisWeek, recentFeedback] = await Promise.all([
+    const [
+      totalFeedback,
+      newThisWeek,
+      recentFeedback,
+      totalClassified,
+      negativeCount,
+      sentimentGroup,
+      themeGroup,
+    ] = await Promise.all([
       prisma.feedback.count({ where: this.tenantFilter() }),
       prisma.feedback.count({
         where: {
@@ -90,6 +102,28 @@ export class FeedbackRepository extends TenantScopedRepository {
           createdAt: { gte: fourteenDaysAgo },
         },
         select: { createdAt: true },
+      }),
+      // Count total classified
+      prisma.feedback.count({
+        where: { ...this.tenantFilter(), sentiment: { not: null } },
+      }),
+      // Count negative sentiment
+      prisma.feedback.count({
+        where: { ...this.tenantFilter(), sentiment: 'NEGATIVE' },
+      }),
+      // Group sentiment
+      prisma.feedback.groupBy({
+        by: ['sentiment'],
+        _count: { sentiment: true },
+        where: { ...this.tenantFilter(), sentiment: { not: null } },
+      }),
+      // Group themes
+      prisma.feedbackTheme.groupBy({
+        by: ['themeId'],
+        _count: { feedbackId: true },
+        where: { workspaceId: this.workspaceId },
+        orderBy: { _count: { feedbackId: 'desc' } },
+        take: 5,
       }),
     ]);
 
@@ -110,25 +144,38 @@ export class FeedbackRepository extends TenantScopedRepository {
 
     const volume = Array.from(volumeMap.entries()).map(([date, count]) => ({ date, count }));
 
+    // Map sentiment
+    const sentiment = sentimentGroup.map((s) => ({
+      name: s.sentiment as string,
+      count: s._count.sentiment,
+    }));
+
+    // Map themes
+    const themeIds = themeGroup.map((t) => t.themeId);
+    let themes: { name: string; count: number }[] = [];
+    if (themeIds.length > 0) {
+      const themeNames = await prisma.theme.findMany({
+        where: { id: { in: themeIds } },
+        select: { id: true, name: true },
+      });
+      const themeMap = new Map(themeNames.map((t) => [t.id, t.name]));
+      themes = themeGroup.map((t) => ({
+        name: themeMap.get(t.themeId) || 'Unknown',
+        count: t._count.feedbackId,
+      }));
+    }
+
+    const pctNegative = totalClassified > 0 ? (negativeCount / totalClassified) * 100 : 0;
+
     return {
       stats: {
         totalFeedback,
         newThisWeek,
-        pctNegative: 15.5, // Mocked until Phase 3
+        pctNegative: Math.round(pctNegative * 10) / 10,
       },
       volume,
-      sentiment: [
-        { name: 'POSITIVE', count: 65 },
-        { name: 'NEUTRAL', count: 35 },
-        { name: 'NEGATIVE', count: 20 },
-      ],
-      themes: [
-        { name: 'Pricing', count: 42 },
-        { name: 'UX/UI', count: 28 },
-        { name: 'Customer Support', count: 18 },
-        { name: 'Performance', count: 12 },
-        { name: 'Feature Requests', count: 8 },
-      ],
+      sentiment,
+      themes,
     };
   }
 

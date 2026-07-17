@@ -18,10 +18,15 @@ export async function GET() {
     const feedbackService = new FeedbackService(session.user.workspaceId);
     const stats = await feedbackService.getDashboardStats();
 
+    // Import dynamically to avoid circular dependencies if any, or just import at top. We can require it here.
+    const { TrendAnalysisService } = await import('@/lib/services/TrendAnalysisService');
+    const trendSvc = new TrendAnalysisService();
+    const trending = await trendSvc.getTrendingThemes(session.user.workspaceId);
+
     // TODO: remove artificial delay before Phase 4 hardening
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    return NextResponse.json(stats, { status: 200 });
+    return NextResponse.json({ ...stats, trending }, { status: 200 });
   } catch (error: any) {
     const status = error.message.includes('Forbidden') ? 403 : 500;
     return NextResponse.json({ error: error.message }, { status });
