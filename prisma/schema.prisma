@@ -108,7 +108,7 @@ model FeedbackTheme {
 
 model Embedding {
   id     String                       @id @default(cuid())
-  vector Unsupported("vector(1536)")?
+  vector Unsupported("vector(3072)")?
 
   feedbackId String   @unique
   feedback   Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
