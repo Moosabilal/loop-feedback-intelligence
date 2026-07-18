@@ -32,9 +32,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   ];
 
   return (
-    <div className="min-h-screen bg-[#0B0B1A] text-white flex">
+    <div className="min-h-screen bg-[#0B0B1A] text-white flex print:bg-white print:text-black">
       {/* Sidebar - fixed and sticky */}
-      <div className="w-64 bg-white/5 border-r border-white/10 flex flex-col h-screen sticky top-0">
+      <div className="w-64 bg-white/5 border-r border-white/10 flex flex-col h-screen sticky top-0 print:hidden">
         <div className="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
           <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center font-bold mr-3 shadow-[0_0_10px_rgba(99,102,241,0.4)]">
             L
