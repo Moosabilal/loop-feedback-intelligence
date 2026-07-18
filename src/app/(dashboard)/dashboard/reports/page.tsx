@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { format } from 'date-fns';
 
 type Report = {
@@ -20,6 +21,8 @@ export default function ReportsPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [period, setPeriod] = useState('30'); // default 30 days
+  const { data: session } = useSession();
+  const isViewer = session?.user?.role === 'VIEWER';
 
   useEffect(() => {
     fetchReports();
@@ -79,31 +82,33 @@ export default function ReportsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-4 bg-white/5 border border-white/10 p-2 rounded-xl">
-          <select
-            value={period}
-            onChange={(e) => setPeriod(e.target.value)}
-            disabled={isGenerating}
-            className="bg-transparent text-white text-sm outline-none cursor-pointer"
-          >
-            <option value="7" className="text-black">
-              Last 7 Days
-            </option>
-            <option value="30" className="text-black">
-              Last 30 Days
-            </option>
-            <option value="90" className="text-black">
-              Last Quarter (90 Days)
-            </option>
-          </select>
-          <button
-            onClick={handleGenerate}
-            disabled={isGenerating}
-            className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white text-sm font-medium rounded-lg px-4 py-2 transition-colors"
-          >
-            {isGenerating ? 'Generating...' : 'Generate Report'}
-          </button>
-        </div>
+        {!isViewer && (
+          <div className="flex items-center gap-4 bg-white/5 border border-white/10 p-2 rounded-xl">
+            <select
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+              disabled={isGenerating}
+              className="bg-transparent text-white text-sm outline-none cursor-pointer"
+            >
+              <option value="7" className="text-black">
+                Last 7 Days
+              </option>
+              <option value="30" className="text-black">
+                Last 30 Days
+              </option>
+              <option value="90" className="text-black">
+                Last Quarter (90 Days)
+              </option>
+            </select>
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating}
+              className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white text-sm font-medium rounded-lg px-4 py-2 transition-colors"
+            >
+              {isGenerating ? 'Generating...' : 'Generate Report'}
+            </button>
+          </div>
+        )}
       </div>
 
       {error && (
