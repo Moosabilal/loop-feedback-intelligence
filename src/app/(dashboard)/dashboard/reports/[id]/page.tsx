@@ -75,13 +75,18 @@ export default function ReportDetailPage() {
           <span className="mr-2">&larr;</span>
           Back to Reports
         </Link>
-        <button
-          onClick={handlePrint}
-          className="flex items-center text-sm font-medium bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg transition-colors border border-white/10"
-        >
-          <span className="mr-2">🖨️</span>
-          Export PDF
-        </button>
+        <div className="flex items-center">
+          <span className="text-xs text-gray-500 mr-4 italic hidden sm:inline-block">
+            Tip: uncheck &quot;Headers and footers&quot; in the print dialog for a cleaner export.
+          </span>
+          <button
+            onClick={handlePrint}
+            className="flex items-center text-sm font-medium bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg transition-colors border border-white/10"
+          >
+            <span className="mr-2">🖨️</span>
+            Export PDF
+          </button>
+        </div>
       </div>
 
       <div className="bg-white/5 print:bg-white border border-white/10 print:border-none rounded-xl p-8 shadow-xl print:shadow-none print:text-black">
