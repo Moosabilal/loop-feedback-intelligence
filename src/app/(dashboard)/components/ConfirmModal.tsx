@@ -39,11 +39,15 @@ export function ConfirmModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[#13132B] border border-white/10 rounded-2xl shadow-2xl p-6 z-50 overflow-hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-modal-title"
+            aria-describedby="confirm-modal-desc"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none" />
 
-            <h2 className="text-xl font-semibold text-white mb-2 relative">{title}</h2>
-            <p className="text-gray-400 text-sm mb-6 relative leading-relaxed">{message}</p>
+            <h2 id="confirm-modal-title" className="text-xl font-semibold text-white mb-2 relative">{title}</h2>
+            <p id="confirm-modal-desc" className="text-gray-400 text-sm mb-6 relative leading-relaxed">{message}</p>
 
             <div className="flex justify-end gap-3 relative">
               <button
@@ -59,10 +63,10 @@ export function ConfirmModal({
                   onConfirm();
                   onClose();
                 }}
-                className={`px-4 py-2 rounded-xl text-white font-medium text-sm transition-colors shadow-lg ${
+                className={`px-4 py-2 rounded-xl text-white font-medium text-sm transition-colors shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#13132B] ${
                   isDestructive
-                    ? 'bg-red-500/80 hover:bg-red-500 shadow-red-500/20'
-                    : 'bg-indigo-500 hover:bg-indigo-600 shadow-indigo-500/30'
+                    ? 'bg-red-500/80 hover:bg-red-500 shadow-red-500/20 focus:ring-red-500'
+                    : 'bg-indigo-500 hover:bg-indigo-600 shadow-indigo-500/30 focus:ring-indigo-500'
                 }`}
               >
                 {confirmText}

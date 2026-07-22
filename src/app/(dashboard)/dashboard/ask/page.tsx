@@ -52,13 +52,15 @@ export default function AskLoopPage() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="e.g., What are users saying about the new dashboard?"
+            aria-label="Ask LOOP a question"
             className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-4 pr-32 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading || !question.trim()}
-            className="absolute right-2 top-2 bottom-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white font-medium rounded-lg px-6 transition-colors"
+            aria-disabled={isLoading || !question.trim()}
+            className="absolute right-2 top-2 bottom-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white font-medium rounded-lg px-6 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-[#0B0B1A]"
           >
             {isLoading ? 'Thinking...' : 'Ask'}
           </button>
