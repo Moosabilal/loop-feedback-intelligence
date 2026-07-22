@@ -197,7 +197,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto flex flex-col min-h-[calc(100vh-64px)]">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto flex flex-col min-h-[calc(100vh-64px)]">
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Feedback Inbox</h1>
@@ -353,7 +353,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex flex-col gap-4">
               {/* Trending Themes Panel */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm flex-1 flex flex-col h-[300px]">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 backdrop-blur-sm flex-1 flex flex-col h-[300px]">
                 <h3 className="text-white font-semibold mb-4 tracking-tight flex items-center gap-2">
                   <svg
                     className="w-5 h-5 text-orange-400"
@@ -463,10 +463,13 @@ export default function DashboardPage() {
               ) : (
                 <div className="divide-y divide-white/10">
                   {feedback.map((item) => (
-                    <div key={item.id} className="p-6 hover:bg-white/5 transition-colors group">
+                    <div
+                      key={item.id}
+                      className="p-4 md:p-6 hover:bg-white/5 transition-colors group"
+                    >
                       <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <p className="text-white text-base leading-relaxed mb-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white text-base leading-relaxed mb-3 break-words">
                             {item.content}
                           </p>
 
@@ -510,7 +513,7 @@ export default function DashboardPage() {
                                 {item.themes?.map((t, idx) => (
                                   <span
                                     key={idx}
-                                    className="px-2 py-1 rounded-md bg-white/5 text-gray-300 text-xs border border-white/10"
+                                    className="px-2 py-1 rounded-md bg-white/5 text-gray-300 text-xs border border-white/10 truncate max-w-full inline-block"
                                   >
                                     #{t.theme.name}
                                   </span>
@@ -519,13 +522,13 @@ export default function DashboardPage() {
                             )}
 
                             {item.rationale && (
-                              <p className="text-gray-400 text-xs italic w-full mt-1">
+                              <p className="text-gray-400 text-xs italic w-full mt-1 break-words">
                                 &quot;{item.rationale}&quot;
                               </p>
                             )}
                           </div>
 
-                          <div className="flex items-center gap-3 text-xs font-medium">
+                          <div className="flex flex-wrap items-center gap-3 text-xs font-medium">
                             <span className="px-2.5 py-1 rounded-md bg-white/10 text-gray-300">
                               {item.channel}
                             </span>

@@ -91,14 +91,14 @@ export default function MembersPage() {
   if (error) return <div className="p-10 text-red-400">Error: {error}</div>;
 
   return (
-    <div className="p-10 max-w-5xl mx-auto space-y-10">
+    <div className="p-4 md:p-10 max-w-5xl mx-auto space-y-10 min-w-0">
       <div>
         <h1 className="text-3xl font-bold mb-2">Workspace Members</h1>
         <p className="text-gray-400">Manage who has access to your LOOP workspace.</p>
       </div>
 
       {isAdmin && (
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <div className="bg-white/5 border border-white/10 rounded-xl p-4 md:p-6 w-full">
           <h2 className="text-xl font-semibold mb-4">Invite New Member</h2>
 
           {inviteError && (

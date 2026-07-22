@@ -65,7 +65,7 @@ export default function ReportDetailPage() {
   }
 
   return (
-    <div className="flex flex-col h-full max-w-4xl mx-auto py-8 px-6">
+    <div className="flex flex-col h-full max-w-4xl mx-auto p-4 md:py-8 md:px-6 min-w-0">
       {/* Hide navigation header when printing */}
       <div className="flex items-center justify-between mb-8 print:hidden">
         <Link
@@ -91,7 +91,9 @@ export default function ReportDetailPage() {
 
       <div className="bg-white/5 print:bg-white border border-white/10 print:border-none rounded-xl p-8 shadow-xl print:shadow-none print:text-black">
         <div className="border-b border-white/10 print:border-gray-200 pb-6 mb-8">
-          <h1 className="text-3xl font-bold text-white print:text-black mb-2">{report.title}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white print:text-black mb-2 break-words leading-tight">
+            {report.title}
+          </h1>
           <div className="text-sm text-gray-400 print:text-gray-500">
             Generated on {format(new Date(report.createdAt), 'MMMM d, yyyy h:mm a')}
           </div>
