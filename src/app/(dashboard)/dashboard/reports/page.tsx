@@ -74,7 +74,7 @@ export default function ReportsPage() {
 
   return (
     <div className="flex flex-col h-full max-w-5xl mx-auto py-8 px-6">
-      <div className="flex justify-between items-end mb-8">
+      <div className="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Voice of Customer Reports</h1>
           <p className="text-gray-400">
@@ -127,42 +127,44 @@ export default function ReportsPage() {
             <p className="text-gray-400">Select a period and generate your first VOC report.</p>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Report Title
-                </th>
-                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Period
-                </th>
-                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Generated On
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {reports.map((report) => (
-                <tr key={report.id} className="hover:bg-white/5 transition-colors group">
-                  <td className="py-4 px-6">
-                    <Link
-                      href={`/dashboard/reports/${report.id}`}
-                      className="text-indigo-400 group-hover:text-indigo-300 font-medium"
-                    >
-                      {report.title}
-                    </Link>
-                  </td>
-                  <td className="py-4 px-6 text-gray-300">
-                    {format(new Date(report.dateRangeStart), 'MMM d, yyyy')} -{' '}
-                    {format(new Date(report.dateRangeEnd), 'MMM d, yyyy')}
-                  </td>
-                  <td className="py-4 px-6 text-gray-400 text-sm">
-                    {format(new Date(report.createdAt), 'MMM d, yyyy h:mm a')}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse whitespace-nowrap">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Report Title
+                  </th>
+                  <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Period
+                  </th>
+                  <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Generated On
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {reports.map((report) => (
+                  <tr key={report.id} className="hover:bg-white/5 transition-colors group">
+                    <td className="py-4 px-6">
+                      <Link
+                        href={`/dashboard/reports/${report.id}`}
+                        className="text-indigo-400 group-hover:text-indigo-300 font-medium"
+                      >
+                        {report.title}
+                      </Link>
+                    </td>
+                    <td className="py-4 px-6 text-gray-300">
+                      {format(new Date(report.dateRangeStart), 'MMM d, yyyy')} -{' '}
+                      {format(new Date(report.dateRangeEnd), 'MMM d, yyyy')}
+                    </td>
+                    <td className="py-4 px-6 text-gray-400 text-sm">
+                      {format(new Date(report.createdAt), 'MMM d, yyyy h:mm a')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

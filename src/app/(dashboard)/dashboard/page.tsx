@@ -198,14 +198,14 @@ export default function DashboardPage() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto flex flex-col min-h-[calc(100vh-64px)]">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Feedback Inbox</h1>
           <p className="text-gray-400">View and manage customer feedback.</p>
         </div>
 
         {canEdit && (
-          <div className="flex gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handleClassifyBatch}
               disabled={isClassifyingBatch}

@@ -121,7 +121,7 @@ export default function MembersPage() {
             </div>
           )}
 
-          <form onSubmit={handleInvite} className="flex gap-4 items-end">
+          <form onSubmit={handleInvite} className="flex flex-col md:flex-row gap-4 md:items-end">
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-400 mb-1">Name</label>
               <input
@@ -144,7 +144,7 @@ export default function MembersPage() {
                 placeholder="jane@acme.com"
               />
             </div>
-            <div className="w-48">
+            <div className="w-full md:w-48">
               <label className="block text-sm font-medium text-gray-400 mb-1">Role</label>
               <select
                 value={inviteRole}
@@ -159,7 +159,7 @@ export default function MembersPage() {
             <button
               type="submit"
               disabled={isInviting}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg transition-all disabled:opacity-50"
+              className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg transition-all disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               {isInviting ? 'Inviting...' : 'Invite'}
             </button>
@@ -168,41 +168,43 @@ export default function MembersPage() {
       )}
 
       <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-black/20 text-gray-400 text-sm">
-            <tr>
-              <th className="px-6 py-4 font-medium">Member</th>
-              <th className="px-6 py-4 font-medium">Role</th>
-              <th className="px-6 py-4 font-medium">Joined</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {members.map((member) => (
-              <tr key={member.id} className="hover:bg-white/5 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="font-medium text-white">{member.name}</div>
-                  <div className="text-sm text-gray-400">{member.email}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      member.role === 'ADMIN'
-                        ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                        : member.role === 'ANALYST'
-                          ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
-                          : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
-                    }`}
-                  >
-                    {member.role}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-400">
-                  {new Date(member.createdAt).toLocaleDateString()}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left whitespace-nowrap">
+            <thead className="bg-black/20 text-gray-400 text-sm">
+              <tr>
+                <th className="px-6 py-4 font-medium">Member</th>
+                <th className="px-6 py-4 font-medium">Role</th>
+                <th className="px-6 py-4 font-medium">Joined</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {members.map((member) => (
+                <tr key={member.id} className="hover:bg-white/5 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-white">{member.name}</div>
+                    <div className="text-sm text-gray-400">{member.email}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        member.role === 'ADMIN'
+                          ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                          : member.role === 'ANALYST'
+                            ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+                            : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
+                      }`}
+                    >
+                      {member.role}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-400">
+                    {new Date(member.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
