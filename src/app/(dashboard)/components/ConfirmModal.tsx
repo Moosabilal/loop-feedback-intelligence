@@ -46,8 +46,15 @@ export function ConfirmModal({
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none" />
 
-            <h2 id="confirm-modal-title" className="text-xl font-semibold text-white mb-2 relative">{title}</h2>
-            <p id="confirm-modal-desc" className="text-gray-400 text-sm mb-6 relative leading-relaxed">{message}</p>
+            <h2 id="confirm-modal-title" className="text-xl font-semibold text-white mb-2 relative">
+              {title}
+            </h2>
+            <p
+              id="confirm-modal-desc"
+              className="text-gray-400 text-sm mb-6 relative leading-relaxed"
+            >
+              {message}
+            </p>
 
             <div className="flex justify-end gap-3 relative">
               <button

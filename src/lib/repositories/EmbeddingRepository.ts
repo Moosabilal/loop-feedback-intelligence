@@ -94,7 +94,7 @@ export class EmbeddingRepository extends TenantScopedRepository {
     return prisma.embedding.count({
       where: {
         workspaceId: this.workspaceId,
-      }
+      },
     });
   }
 }
