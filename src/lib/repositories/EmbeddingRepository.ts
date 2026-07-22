@@ -86,4 +86,15 @@ export class EmbeddingRepository extends TenantScopedRepository {
       themes: themesMap.get(row.id) || [],
     }));
   }
+
+  /**
+   * Count total embeddings for the current workspace.
+   */
+  async countEmbeddings(): Promise<number> {
+    return prisma.embedding.count({
+      where: {
+        workspaceId: this.workspaceId,
+      }
+    });
+  }
 }

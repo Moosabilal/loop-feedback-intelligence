@@ -28,7 +28,17 @@ export class AskLoopService {
   /**
    * RAG pipeline: embeds the question, finds similar feedback, and generates a grounded response.
    */
-  async askQuestion(question: string): Promise<{ answer: string; sources: any[] }> {
+  async askQuestion(question: string): Promise<{ answer: string; sources: any[]; isEmpty?: boolean }> {
+    // 0. Check if any embeddings exist
+    const totalEmbeddings = await this.embeddingRepo.countEmbeddings();
+    if (totalEmbeddings === 0) {
+      return {
+        answer: "No feedback has been embedded yet. Please backfill embeddings or ingest new feedback to use Ask LOOP.",
+        sources: [],
+        isEmpty: true,
+      };
+    }
+
     // 1. Embed the question
     const queryVector = await this.aiProvider.generateEmbedding(question);
 
