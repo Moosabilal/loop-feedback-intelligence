@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 
 export default function AskLoopPage() {
@@ -95,7 +96,7 @@ export default function AskLoopPage() {
             <div className="bg-white/5 border border-white/10 rounded-xl p-8 shadow-xl">
               <h2 className="text-xl font-semibold text-white mb-4">Answer</h2>
               <div className="prose prose-invert max-w-none text-gray-300">
-                {response.answer.split('\n').map((line, i) => (
+                {response.answer.split('\n').map((line: string, i: number) => (
                   <p key={i} className="mb-4 last:mb-0">
                     {line}
                   </p>
@@ -108,7 +109,7 @@ export default function AskLoopPage() {
             <div className="bg-white/5 border border-white/10 rounded-xl p-8">
               <h3 className="text-lg font-semibold text-white mb-4">Retrieved Sources</h3>
               <div className="space-y-4">
-                {response.sources.map((source, index) => (
+                {response.sources.map((source: any, index: number) => (
                   <div key={source.id} className="p-4 bg-black/20 rounded-lg border border-white/5">
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-xs font-medium px-2 py-1 bg-white/10 text-gray-300 rounded">
