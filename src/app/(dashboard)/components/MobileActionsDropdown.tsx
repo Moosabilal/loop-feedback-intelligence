@@ -69,7 +69,13 @@ export function MobileActionsDropdown({
       <AnimatePresence>
         {isOpen && (
           <>
-            <div className="fixed inset-0 z-40" onClick={() => { setIsOpen(false); setIsSimulateOpen(false); }} />
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => {
+                setIsOpen(false);
+                setIsSimulateOpen(false);
+              }}
+            />
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -84,10 +90,12 @@ export function MobileActionsDropdown({
                 disabled={isClassifying}
                 className="w-full text-left px-3 py-2.5 text-sm text-purple-300 hover:bg-purple-500/10 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
               >
-                {isClassifying && <div className="w-3 h-3 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />}
+                {isClassifying && (
+                  <div className="w-3 h-3 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+                )}
                 Classify Backlog
               </button>
-              
+
               <button
                 onClick={() => {
                   onEmbed();
@@ -96,7 +104,9 @@ export function MobileActionsDropdown({
                 disabled={isEmbedding}
                 className="w-full text-left px-3 py-2.5 text-sm text-blue-300 hover:bg-blue-500/10 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
               >
-                {isEmbedding && <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />}
+                {isEmbedding && (
+                  <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                )}
                 Backfill Embeddings
               </button>
 
@@ -111,7 +121,9 @@ export function MobileActionsDropdown({
                 className="w-full text-left px-3 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center justify-between disabled:opacity-50"
               >
                 <div className="flex items-center gap-2">
-                  {isSimulating && <div className="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />}
+                  {isSimulating && (
+                    <div className="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                  )}
                   Simulate Channel
                 </div>
                 <svg
@@ -120,7 +132,12 @@ export function MobileActionsDropdown({
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
 
@@ -147,7 +164,6 @@ export function MobileActionsDropdown({
                   </motion.div>
                 )}
               </AnimatePresence>
-
             </motion.div>
           </>
         )}
