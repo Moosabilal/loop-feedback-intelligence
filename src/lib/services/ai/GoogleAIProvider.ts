@@ -4,11 +4,8 @@ import { z } from 'zod';
 import { IAIProvider } from '../../interfaces/IAIProvider';
 
 /**
- * TEMPORARY SUBSTITUTE PROVIDER
- * This provider uses the Google Gemini API to temporarily unblock Phase 3 development
- * while waiting for the official Anthropic API key to be provisioned.
- * Once the Anthropic key is available, switch AI_PROVIDER=anthropic in the environment
- * to seamlessly return to the original implementation.
+ * Primary AI Provider using Google Gemini.
+ * Utilizes gemini-3.1-flash-lite for high rate limits (15 RPM / 500 per day free tier).
  */
 
 // Global rate limiter state to ensure max 15 RPM (1 request every 4 seconds)
@@ -42,8 +39,7 @@ export class GoogleAIProvider implements IAIProvider {
     this.client = new GoogleGenerativeAI(apiKey);
     // Use gemini-3.1-flash-lite because its free tier offers 500 requests/day and 15 RPM
     // (a 25x improvement over standard Flash's 20 requests/day limit).
-    // This provides sufficient daily quota headroom for testing and backfilling
-    // during the temporary Anthropic-key-pending period.
+    // This provides sufficient daily quota headroom for testing and backfilling.
     this.model = this.client.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
     this.embeddingModel = this.client.getGenerativeModel({ model: 'gemini-embedding-2' });
   }
