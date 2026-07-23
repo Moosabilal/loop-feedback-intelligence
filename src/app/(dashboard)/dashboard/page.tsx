@@ -219,11 +219,11 @@ export default function DashboardPage() {
         </div>
 
         {canEdit && (
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3 overflow-x-auto w-full xl:w-auto pb-1 md:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button
               onClick={handleClassifyBatch}
               disabled={isClassifyingBatch}
-              className="px-5 py-2.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 text-purple-300 rounded-xl font-medium transition-colors border border-purple-500/30 flex items-center gap-2 disabled:opacity-50"
+              className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex-shrink-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 text-purple-300 rounded-xl font-medium transition-colors border border-purple-500/30 flex items-center gap-2 disabled:opacity-50"
             >
               {isClassifyingBatch ? (
                 <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
@@ -242,7 +242,7 @@ export default function DashboardPage() {
             <button
               onClick={handleEmbeddingBatch}
               disabled={isEmbeddingBatch}
-              className="px-5 py-2.5 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 text-blue-300 rounded-xl font-medium transition-colors border border-blue-500/30 flex items-center gap-2 disabled:opacity-50"
+              className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex-shrink-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 text-blue-300 rounded-xl font-medium transition-colors border border-blue-500/30 flex items-center gap-2 disabled:opacity-50"
             >
               {isEmbeddingBatch ? (
                 <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
@@ -261,13 +261,13 @@ export default function DashboardPage() {
             <SimulateChannelDropdown onSuccess={refreshAll} />
             <button
               onClick={() => setIsCsvModalOpen(true)}
-              className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors border border-white/5"
+              className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex-shrink-0 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors border border-white/5"
             >
               Upload CSV
             </button>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+              className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex-shrink-0 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)]"
             >
               + Log Feedback
             </button>

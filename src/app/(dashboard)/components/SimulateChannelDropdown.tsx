@@ -43,7 +43,7 @@ export function SimulateChannelDropdown({ onSuccess }: SimulateChannelDropdownPr
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={isSimulating}
-        className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors border border-white/5 disabled:opacity-50 flex items-center gap-2"
+        className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex-shrink-0 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors border border-white/5 disabled:opacity-50 flex items-center gap-2"
       >
         {isSimulating ? 'Simulating...' : 'Simulate Channel'}
         <svg
