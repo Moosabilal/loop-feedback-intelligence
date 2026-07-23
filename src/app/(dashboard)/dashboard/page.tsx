@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
+import { motion } from 'framer-motion';
 import { FeedbackCreateModal } from '../components/FeedbackCreateModal';
 import { CsvUploadModal } from '../components/CsvUploadModal';
 import { SimulateChannelDropdown } from '../components/SimulateChannelDropdown';
@@ -24,6 +25,19 @@ type FeedbackItem = {
   rationale: string | null;
   themes: { theme: { name: string } }[];
   createdAt: string;
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
 };
 
 export default function DashboardPage() {
@@ -274,9 +288,14 @@ export default function DashboardPage() {
           onLogFeedback={() => setIsCreateModalOpen(true)}
         />
       ) : (
-        <div className="flex flex-col gap-6 flex-1">
+        <motion.div 
+          variants={staggerContainer}
+          initial="hidden"
+          animate="show"
+          className="flex flex-col gap-6 flex-1"
+        >
           {/* Top Row: Stat Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard
               title="Total Feedback"
               value={statsData?.stats?.totalFeedback || 0}
@@ -290,7 +309,6 @@ export default function DashboardPage() {
                   />
                 </svg>
               }
-              delay={0.1}
             />
             <StatCard
               title="Negative Sentiment"
@@ -310,7 +328,6 @@ export default function DashboardPage() {
                   />
                 </svg>
               }
-              delay={0.2}
             />
             <StatCard
               title="New This Week"
@@ -330,20 +347,19 @@ export default function DashboardPage() {
                   />
                 </svg>
               }
-              delay={0.3}
             />
-          </div>
+          </motion.div>
 
           {/* Middle Row: Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <VolumeChart data={statsData?.volume || []} />
             </div>
             <div>
               <SentimentChart data={statsData?.sentiment || []} />
             </div>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          </motion.div>
+          <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <ThemeChart
                 data={statsData?.themes || []}
@@ -404,10 +420,10 @@ export default function DashboardPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Bottom Row: Inbox */}
-          <div className="flex flex-col mt-2">
+          <motion.div variants={staggerItem} className="flex flex-col mt-2">
             <div className="mb-4 relative flex gap-3">
               <div className="relative flex-1">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -640,8 +656,8 @@ export default function DashboardPage() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
 
       <FeedbackCreateModal
