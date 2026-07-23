@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LOOP: Customer-Feedback Intelligence Platform
 
-## Getting Started
+LOOP is a B2B SaaS platform designed to ingest, analyze, and report on customer feedback. Using generative AI, LOOP automates the classification of qualitative feedback, detects trending themes in real-time, provides a conversational RAG interface for querying feedback history, and generates executive-ready Voice-of-Customer reports.
 
-First, run the development server:
+## Tech Stack
 
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS, Framer Motion
+- **Database**: PostgreSQL (via Supabase or Neon) with `pgvector` for embeddings
+- **ORM**: Prisma
+- **Authentication**: NextAuth.js (Credentials provider + JWT session)
+- **AI Backend**: Google Gemini (`@google/generative-ai`), defaulting to `gemini-3.1-flash-lite`
+
+## Architecture
+
+LOOP is built on a strict n-tier architecture tailored for multi-tenant B2B SaaS:
+
+1. **Routing Layer** (Next.js App Router): Handles incoming requests, HTTP methods, and React Server Components.
+2. **Service Layer** (`src/lib/services/`): Pure TypeScript classes containing business logic. Fully decoupled from Next.js specifics.
+3. **Repository Layer** (`src/lib/repositories/`): Data access layer extending a base `TenantScopedRepository` to guarantee that all database queries are strictly scoped to the active user's `workspaceId`.
+4. **AI Abstraction** (`src/lib/interfaces/IAIProvider.ts`): The AI provider is abstracted behind an interface, allowing seamless swapping of underlying LLM engines. `GoogleAIProvider` is the permanent, primary engine driving the application.
+
+## Local Setup
+
+### 1. Prerequisites
+- Node.js 18+
+- A PostgreSQL database with `pgvector` enabled (e.g., Supabase)
+- A Google Gemini API Key
+
+### 2. Environment Variables
+Clone the repository and create a `.env` file based on `.env.example`:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ensure the following variables are populated in your `.env`:
+- `DATABASE_URL`: Connection string for Prisma migrations and standard queries.
+- `DIRECT_URL`: Direct connection string for Prisma (often used for migrations in pooled environments like Supabase).
+- `NEXTAUTH_SECRET`: A secure random string (e.g., generate via `openssl rand -base64 32`).
+- `NEXTAUTH_URL`: `http://localhost:3000`
+- `AI_PROVIDER`: `google`
+- `GOOGLE_AI_API_KEY`: Your Gemini API key.
+- `ANTHROPIC_API_KEY`: (Optional) Set `AI_PROVIDER=anthropic` and provide this key to use Claude instead of Gemini.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Database Initialization
+Run the Prisma migrations to create the schema, including the `pgvector` extension:
+```bash
+npx prisma migrate deploy
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Generate the Prisma client:
+```bash
+npx prisma generate
+```
 
-## Learn More
+### 4. Seed the Database
+Seed the database with a realistic demo workspace, themes, and 120 historical feedback items:
+```bash
+npm run seed
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 5. Run the Application
+Start the Next.js development server:
+```bash
+npm run dev
+```
+Navigate to `http://localhost:3000` to view the app.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Demo Credentials
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The `npm run seed` command provisions a demo workspace with three distinct roles. Use the following credentials to explore the Role-Based Access Control (RBAC):
 
-## Deploy on Vercel
+- **Admin Account**: 
+  - Email: `admin@acme.com`
+  - Password: `loop123`
+  - *Capabilities: Full access (simulate feedback, manage members, generate reports, use Ask LOOP).*
+- **Analyst Account**: 
+  - Email: `analyst@acme.com`
+  - Password: `loop123`
+  - *Capabilities: Analyze feedback, generate reports, use Ask LOOP. Cannot manage members.*
+- **Viewer Account**: 
+  - Email: `viewer@acme.com`
+  - Password: `loop123`
+  - *Capabilities: Read-only access to dashboards and Ask LOOP. Cannot simulate feedback or generate reports.*
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Screenshots
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> **TODO (Step 4.6):** Capture and insert real screenshots of the final UI for the Dashboard, Inbox, Ask LOOP, and Reports.
+
+- `[Screenshot: Dashboard overview highlighting sentiment and volume charts]`
+- `[Screenshot: Feedback inbox demonstrating AI auto-classification]`
+- `[Screenshot: Ask LOOP conversational RAG interface]`
+- `[Screenshot: Auto-generated Voice of Customer report]`
