@@ -8,7 +8,6 @@ interface StatCardProps {
   value: string | number;
   subtitle?: string;
   icon?: React.ReactNode;
-  icon?: React.ReactNode;
 }
 
 const cardVariants = {
