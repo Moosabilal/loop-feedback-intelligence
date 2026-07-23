@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { FeedbackCreateModal } from '../components/FeedbackCreateModal';
 import { CsvUploadModal } from '../components/CsvUploadModal';
 import { SimulateChannelDropdown } from '../components/SimulateChannelDropdown';
+import { MobileActionsDropdown } from '../components/MobileActionsDropdown';
 import { useToast } from '@/lib/contexts/ToastContext';
 import { Role, FeedbackStatus } from '@prisma/client';
 import { DashboardEmptyState } from '../components/DashboardEmptyState';
@@ -219,55 +220,68 @@ export default function DashboardPage() {
         </div>
 
         {canEdit && (
-          <div className="flex items-center gap-2 md:gap-3 overflow-x-auto w-full xl:w-auto pb-1 md:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <button
-              onClick={handleClassifyBatch}
-              disabled={isClassifyingBatch}
-              className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex-shrink-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 text-purple-300 rounded-xl font-medium transition-colors border border-purple-500/30 flex items-center gap-2 disabled:opacity-50"
-            >
-              {isClassifyingBatch ? (
-                <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              )}
-              Classify Backlog
-            </button>
-            <button
-              onClick={handleEmbeddingBatch}
-              disabled={isEmbeddingBatch}
-              className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex-shrink-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 text-blue-300 rounded-xl font-medium transition-colors border border-blue-500/30 flex items-center gap-2 disabled:opacity-50"
-            >
-              {isEmbeddingBatch ? (
-                <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                  />
-                </svg>
-              )}
-              Backfill Embeddings
-            </button>
-            <SimulateChannelDropdown onSuccess={refreshAll} />
+          <div className="flex flex-wrap items-center gap-2 md:gap-3">
+            {/* Desktop Actions */}
+            <div className="hidden xl:flex items-center gap-2 md:gap-3">
+              <button
+                onClick={handleClassifyBatch}
+                disabled={isClassifyingBatch}
+                className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 text-purple-300 rounded-xl font-medium transition-colors border border-purple-500/30 flex items-center gap-2 disabled:opacity-50"
+              >
+                {isClassifyingBatch ? (
+                  <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                )}
+                Classify Backlog
+              </button>
+              <button
+                onClick={handleEmbeddingBatch}
+                disabled={isEmbeddingBatch}
+                className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 text-blue-300 rounded-xl font-medium transition-colors border border-blue-500/30 flex items-center gap-2 disabled:opacity-50"
+              >
+                {isEmbeddingBatch ? (
+                  <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    />
+                  </svg>
+                )}
+                Backfill Embeddings
+              </button>
+              <SimulateChannelDropdown onSuccess={refreshAll} />
+            </div>
+
+            {/* Mobile Actions Dropdown */}
+            <MobileActionsDropdown
+              onClassify={handleClassifyBatch}
+              isClassifying={isClassifyingBatch}
+              onEmbed={handleEmbeddingBatch}
+              isEmbedding={isEmbeddingBatch}
+              onSimulateSuccess={refreshAll}
+            />
+
             <button
               onClick={() => setIsCsvModalOpen(true)}
-              className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex-shrink-0 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors border border-white/5"
+              className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors border border-white/5"
             >
               Upload CSV
             </button>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm whitespace-nowrap flex-shrink-0 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+              className="px-3 md:px-5 py-2 md:py-2.5 text-xs md:text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)]"
             >
               + Log Feedback
             </button>
