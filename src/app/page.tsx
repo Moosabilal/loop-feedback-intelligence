@@ -1,6 +1,12 @@
 'use client';
 
-import { motion, useMotionTemplate, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useSpring,
+  useReducedMotion,
+} from 'framer-motion';
 import Link from 'next/link';
 import { useRef, useEffect } from 'react';
 
@@ -20,11 +26,11 @@ export default function LandingPage() {
     const rect = containerRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
+
     // Calculate rotation limits (-5deg to 5deg)
     const rotateXValue = ((e.clientY - centerY) / (rect.height / 2)) * -5;
     const rotateYValue = ((e.clientX - centerX) / (rect.width / 2)) * 5;
-    
+
     rotateX.set(rotateXValue);
     rotateY.set(rotateYValue);
   };
@@ -80,11 +86,14 @@ export default function LandingPage() {
             <span className="text-xl font-bold tracking-tight">LOOP</span>
           </div>
           <div className="flex items-center gap-6">
-            <Link href="/login" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
+            <Link
+              href="/login"
+              className="text-gray-300 hover:text-white transition-colors text-sm font-medium"
+            >
               Sign In
             </Link>
-            <Link 
-              href="/signup" 
+            <Link
+              href="/signup"
               className="bg-white/10 hover:bg-white/20 border border-white/10 px-5 py-2.5 rounded-full text-sm font-medium transition-all hover:scale-105 active:scale-95"
             >
               Get Started
@@ -93,41 +102,82 @@ export default function LandingPage() {
         </nav>
 
         {/* Hero Section */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="show"
           className="flex flex-col items-center text-center max-w-4xl mx-auto mb-20"
         >
-          <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-medium mb-8">
+          <motion.div
+            variants={itemVariants}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-medium mb-8"
+          >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
             </span>
             Meet the future of product feedback
           </motion.div>
-          
-          <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1] bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
-            Turn customer feedback into <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">product intelligence.</span>
+
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1] bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400"
+          >
+            Turn customer feedback into{' '}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+              product intelligence.
+            </span>
           </motion.h1>
-          
-          <motion.p variants={itemVariants} className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl leading-relaxed">
-            Automatically classify, analyze, and extract actionable insights from your user feedback in real-time. Built for teams that move fast.
+
+          <motion.p
+            variants={itemVariants}
+            className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl leading-relaxed"
+          >
+            Automatically classify, analyze, and extract actionable insights from your user feedback
+            in real-time. Built for teams that move fast.
           </motion.p>
 
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-4">
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row items-center gap-4"
+          >
             <Link
               href="/signup"
               className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-semibold transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(99,102,241,0.3)] flex items-center gap-2"
             >
               Start analyzing for free
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
+              </svg>
             </Link>
             <Link
               href="/login"
               className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-full font-semibold transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
             >
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+              <svg
+                className="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
               View live demo
             </Link>
           </motion.div>
@@ -154,7 +204,7 @@ export default function LandingPage() {
               <div className="w-3 h-3 rounded-full bg-green-500/80" />
               <div className="ml-4 h-5 w-48 bg-white/5 rounded-md" />
             </div>
-            
+
             {/* Content Mockup */}
             <div className="p-8 flex flex-col gap-6 opacity-70">
               <div className="flex gap-6">

@@ -14,7 +14,8 @@ export function AnimatedCounter({ value, className = '', delay = 0 }: AnimatedCo
   const count = useMotionValue(0);
 
   // Extract numeric part and suffix (e.g., "40%" -> num: 40, suffix: "%")
-  const numericValue = typeof value === 'number' ? value : parseFloat(value.toString().replace(/[^0-9.-]+/g, '')) || 0;
+  const numericValue =
+    typeof value === 'number' ? value : parseFloat(value.toString().replace(/[^0-9.-]+/g, '')) || 0;
   const suffix = typeof value === 'string' ? value.replace(/[0-9.-]+/g, '') : '';
 
   const rounded = useTransform(count, (latest) => {
