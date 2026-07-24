@@ -206,15 +206,65 @@ export default function LandingPage() {
             </div>
 
             {/* Content Mockup */}
-            <div className="p-8 flex flex-col gap-6 opacity-70">
+            <div className="p-8 flex flex-col gap-6 opacity-80">
+              {/* Stat Cards Row */}
               <div className="flex gap-6">
-                <div className="flex-1 h-32 bg-gradient-to-br from-indigo-500/10 to-transparent border border-indigo-500/20 rounded-xl" />
-                <div className="flex-1 h-32 bg-white/5 border border-white/5 rounded-xl" />
-                <div className="flex-1 h-32 bg-white/5 border border-white/5 rounded-xl" />
+                <div className="flex-1 p-6 bg-gradient-to-br from-indigo-500/10 to-transparent border border-indigo-500/20 rounded-xl flex flex-col justify-between">
+                  <div className="text-indigo-300 text-sm font-medium tracking-wide">
+                    TOTAL FEEDBACK
+                  </div>
+                  <div className="text-4xl font-bold text-white mt-2">12,450</div>
+                </div>
+                <div className="flex-1 p-6 bg-white/5 border border-white/5 rounded-xl flex flex-col justify-between">
+                  <div className="text-gray-400 text-sm font-medium tracking-wide">
+                    NEGATIVE SENTIMENT
+                  </div>
+                  <div className="text-4xl font-bold text-white mt-2">14.2%</div>
+                </div>
+                <div className="flex-1 p-6 bg-white/5 border border-white/5 rounded-xl flex flex-col justify-between">
+                  <div className="text-gray-400 text-sm font-medium tracking-wide">
+                    NEW THIS WEEK
+                  </div>
+                  <div className="text-4xl font-bold text-white mt-2 text-green-400">+842</div>
+                </div>
               </div>
+
+              {/* Main Charts Row */}
               <div className="flex gap-6">
-                <div className="w-2/3 h-64 bg-white/5 border border-white/5 rounded-xl" />
-                <div className="w-1/3 h-64 bg-white/5 border border-white/5 rounded-xl" />
+                <div className="w-2/3 p-6 bg-white/5 border border-white/5 rounded-xl flex flex-col">
+                  <div className="text-gray-400 text-sm font-medium tracking-wide mb-6">
+                    FEEDBACK VOLUME
+                  </div>
+                  {/* Fake Bar Chart */}
+                  <div className="flex-1 flex items-end gap-3 px-2">
+                    {[40, 60, 45, 80, 55, 90, 75, 100].map((h, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 bg-indigo-500/40 rounded-t-sm transition-all hover:bg-indigo-500/60"
+                        style={{ height: `${h}%` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="w-1/3 p-6 bg-white/5 border border-white/5 rounded-xl flex flex-col">
+                  <div className="text-gray-400 text-sm font-medium tracking-wide mb-6">
+                    TOP THEMES
+                  </div>
+                  {/* Fake Theme List */}
+                  <div className="flex flex-col gap-4 flex-1">
+                    {['Pricing Complaints', 'Login Issues', 'Feature Requests'].map((theme, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <span className="text-sm text-gray-300">{theme}</span>
+                        <div className="w-16 h-2 bg-white/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-purple-500/60"
+                            style={{ width: `${80 - i * 20}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 
