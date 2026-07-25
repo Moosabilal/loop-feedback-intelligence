@@ -72,7 +72,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Sidebar - sliding drawer on mobile, fixed and sticky on md+ */}
       <div
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#111122] md:bg-white/5 border-r border-white/10 flex flex-col h-screen transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 print:hidden ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#111122] md:bg-white/5 border-r border-white/10 flex flex-col h-screen transform transition-transform duration-300 ease-in-out md:sticky md:top-0 md:translate-x-0 print:hidden ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="h-16 flex items-center justify-between px-6 border-b border-white/10 shrink-0">
           <div className="flex items-center">

@@ -18,6 +18,9 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: 'LOOP — AI Customer Feedback Intelligence',
   description: 'AI-driven customer feedback analysis and insights',
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

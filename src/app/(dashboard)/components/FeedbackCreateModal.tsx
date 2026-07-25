@@ -108,78 +108,83 @@ export function FeedbackCreateModal({ isOpen, onClose, onSuccess }: FeedbackCrea
             onClick={onClose}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
           />
-          <motion.div
-            ref={modalRef}
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#13132B] border border-white/10 rounded-2xl shadow-2xl p-6 z-50 overflow-hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="create-modal-title"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto pointer-events-none">
+            <motion.div
+              ref={modalRef}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-[#13132B] border border-white/10 rounded-2xl shadow-2xl p-6 overflow-hidden pointer-events-auto"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="create-modal-title"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none" />
 
-            <h2 id="create-modal-title" className="text-xl font-semibold text-white mb-6 relative">
-              Log Feedback Manually
-            </h2>
+              <h2
+                id="create-modal-title"
+                className="text-xl font-semibold text-white mb-6 relative"
+              >
+                Log Feedback Manually
+              </h2>
 
-            {error && (
-              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-sm relative">
-                {error}
-              </div>
-            )}
+              {error && (
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-sm relative">
+                  {error}
+                </div>
+              )}
 
-            <form onSubmit={handleSubmit} className="space-y-4 relative">
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">
-                  Feedback Content
-                </label>
-                <textarea
-                  required
-                  rows={4}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-none transition-all"
-                  placeholder="Paste or type feedback here..."
-                />
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-4 relative">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">
+                    Feedback Content
+                  </label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-none transition-all"
+                    placeholder="Paste or type feedback here..."
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">
-                  Source Channel
-                </label>
-                <select
-                  value={channel}
-                  onChange={(e) => setChannel(e.target.value as any)}
-                  className="w-full bg-[#1A1A36] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none"
-                >
-                  {CHANNEL_ENUM.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">
+                    Source Channel
+                  </label>
+                  <select
+                    value={channel}
+                    onChange={(e) => setChannel(e.target.value as any)}
+                    className="w-full bg-[#1A1A36] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none"
+                  >
+                    {CHANNEL_ENUM.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="flex justify-end gap-3 mt-8">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-5 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-gray-500"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? 'Saving...' : 'Save Feedback'}
-                </button>
-              </div>
-            </form>
-          </motion.div>
+                <div className="flex justify-end gap-3 mt-8">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="px-5 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? 'Saving...' : 'Save Feedback'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

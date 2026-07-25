@@ -130,128 +130,134 @@ export function CsvUploadModal({ isOpen, onClose, onSuccess }: CsvUploadModalPro
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
             onClick={handleClose}
           />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-[#13132B] border border-white/10 rounded-2xl shadow-2xl p-8 z-50 overflow-hidden max-h-[90vh] flex flex-col"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto pointer-events-none">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-2xl bg-[#13132B] border border-white/10 rounded-2xl shadow-2xl p-6 sm:p-8 overflow-hidden max-h-[90vh] flex flex-col pointer-events-auto"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none" />
 
-            <div className="flex justify-between items-center mb-6 relative">
-              <h2 className="text-2xl font-semibold text-white">Bulk Upload Feedback</h2>
-              <button
-                onClick={downloadTemplate}
-                className="text-sm px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-indigo-300 transition-colors border border-indigo-500/30"
-              >
-                Download CSV Template
-              </button>
-            </div>
-
-            {error && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm relative">
-                {error}
-              </div>
-            )}
-
-            {!summary ? (
-              <div className="relative flex-1">
-                <div
-                  className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors ${
-                    file
-                      ? 'border-indigo-500/50 bg-indigo-500/5'
-                      : 'border-white/20 hover:border-white/40 hover:bg-white/5'
-                  }`}
+              <div className="flex justify-between items-center mb-6 relative">
+                <h2 className="text-2xl font-semibold text-white">Bulk Upload Feedback</h2>
+                <button
+                  onClick={downloadTemplate}
+                  className="text-sm px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-indigo-300 transition-colors border border-indigo-500/30"
                 >
-                  <input
-                    type="file"
-                    accept=".csv"
-                    className="hidden"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                  />
-                  {file ? (
-                    <div>
-                      <p className="text-white font-medium text-lg mb-2">{file.name}</p>
-                      <p className="text-gray-400 text-sm">{(file.size / 1024).toFixed(1)} KB</p>
-                      <button
-                        onClick={() => setFile(null)}
-                        className="mt-4 text-sm text-red-400 hover:text-red-300"
-                      >
-                        Remove File
-                      </button>
+                  Download CSV Template
+                </button>
+              </div>
+
+              {error && (
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm relative">
+                  {error}
+                </div>
+              )}
+
+              {!summary ? (
+                <div className="relative flex-1">
+                  <div
+                    className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors ${
+                      file
+                        ? 'border-indigo-500/50 bg-indigo-500/5'
+                        : 'border-white/20 hover:border-white/40 hover:bg-white/5'
+                    }`}
+                  >
+                    <input
+                      type="file"
+                      accept=".csv"
+                      className="hidden"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                    />
+                    {file ? (
+                      <div>
+                        <p className="text-white font-medium text-lg mb-2">{file.name}</p>
+                        <p className="text-gray-400 text-sm">{(file.size / 1024).toFixed(1)} KB</p>
+                        <button
+                          onClick={() => setFile(null)}
+                          className="mt-4 text-sm text-red-400 hover:text-red-300"
+                        >
+                          Remove File
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors"
+                        >
+                          Select CSV File
+                        </button>
+                        <p className="text-gray-400 text-sm mt-4">
+                          Max {MAX_ROWS} rows, up to 5MB.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end gap-3 mt-8">
+                    <button
+                      onClick={handleClose}
+                      className="px-5 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-colors font-medium"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleUpload}
+                      disabled={!file || isProcessing}
+                      className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    >
+                      {isProcessing ? 'Processing...' : 'Upload Data'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative flex-1 overflow-auto">
+                  <div className="flex items-center gap-6 mb-6 p-6 bg-white/5 rounded-xl border border-white/10">
+                    <div className="flex-1 text-center border-r border-white/10">
+                      <p className="text-3xl font-bold text-green-400 mb-1">
+                        {summary.successCount}
+                      </p>
+                      <p className="text-gray-400 text-sm uppercase tracking-wider">Imported</p>
                     </div>
-                  ) : (
+                    <div className="flex-1 text-center">
+                      <p className="text-3xl font-bold text-red-400 mb-1">{summary.failureCount}</p>
+                      <p className="text-gray-400 text-sm uppercase tracking-wider">Failed</p>
+                    </div>
+                  </div>
+
+                  {summary.errors.length > 0 && (
                     <div>
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors"
-                      >
-                        Select CSV File
-                      </button>
-                      <p className="text-gray-400 text-sm mt-4">Max {MAX_ROWS} rows, up to 5MB.</p>
+                      <h3 className="text-white font-medium mb-3">Error Report</h3>
+                      <div className="bg-black/30 rounded-xl p-4 overflow-y-auto max-h-[40vh] border border-red-500/20">
+                        <ul className="space-y-2 text-sm text-red-300 font-mono">
+                          {summary.errors.map((err, i) => (
+                            <li
+                              key={i}
+                              className="pb-2 border-b border-white/5 last:border-0 last:pb-0"
+                            >
+                              {err}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   )}
-                </div>
 
-                <div className="flex justify-end gap-3 mt-8">
-                  <button
-                    onClick={handleClose}
-                    className="px-5 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 transition-colors font-medium"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleUpload}
-                    disabled={!file || isProcessing}
-                    className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors shadow-[0_0_15px_rgba(99,102,241,0.3)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {isProcessing ? 'Processing...' : 'Upload Data'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="relative flex-1 overflow-auto">
-                <div className="flex items-center gap-6 mb-6 p-6 bg-white/5 rounded-xl border border-white/10">
-                  <div className="flex-1 text-center border-r border-white/10">
-                    <p className="text-3xl font-bold text-green-400 mb-1">{summary.successCount}</p>
-                    <p className="text-gray-400 text-sm uppercase tracking-wider">Imported</p>
-                  </div>
-                  <div className="flex-1 text-center">
-                    <p className="text-3xl font-bold text-red-400 mb-1">{summary.failureCount}</p>
-                    <p className="text-gray-400 text-sm uppercase tracking-wider">Failed</p>
+                  <div className="flex justify-end mt-8">
+                    <button
+                      onClick={handleClose}
+                      className="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors"
+                    >
+                      Close
+                    </button>
                   </div>
                 </div>
-
-                {summary.errors.length > 0 && (
-                  <div>
-                    <h3 className="text-white font-medium mb-3">Error Report</h3>
-                    <div className="bg-black/30 rounded-xl p-4 overflow-y-auto max-h-[40vh] border border-red-500/20">
-                      <ul className="space-y-2 text-sm text-red-300 font-mono">
-                        {summary.errors.map((err, i) => (
-                          <li
-                            key={i}
-                            className="pb-2 border-b border-white/5 last:border-0 last:pb-0"
-                          >
-                            {err}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex justify-end mt-8">
-                  <button
-                    onClick={handleClose}
-                    className="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            )}
-          </motion.div>
+              )}
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
