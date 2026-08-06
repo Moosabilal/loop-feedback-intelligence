@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { FeedbackService } from '@/lib/services/FeedbackService';
 import { AuthorizationService } from '@/lib/services/AuthorizationService';
 import { Role } from '@prisma/client';
+import { TrendAnalysisService } from '@/lib/services/TrendAnalysisService';
 
 export async function GET() {
   try {
@@ -18,8 +19,6 @@ export async function GET() {
     const feedbackService = new FeedbackService(session.user.workspaceId);
     const stats = await feedbackService.getDashboardStats();
 
-    // Import dynamically to avoid circular dependencies if any, or just import at top. We can require it here.
-    const { TrendAnalysisService } = await import('@/lib/services/TrendAnalysisService');
     const trendSvc = new TrendAnalysisService();
     const trending = await trendSvc.getTrendingThemes(session.user.workspaceId);
 

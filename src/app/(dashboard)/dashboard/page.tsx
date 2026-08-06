@@ -71,7 +71,7 @@ export default function DashboardPage() {
         <div className="flex-1 flex items-center justify-center">
           <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
         </div>
-      ) : statsData?.stats?.totalFeedback === 0 ? (
+      ) : !statsData || statsData?.stats?.totalFeedback === 0 ? (
         <DashboardEmptyState
           canCreate={false}
           onCsvUpload={() => {}}
