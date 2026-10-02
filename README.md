@@ -86,6 +86,10 @@ The `npm run seed` command provisions a demo workspace with three distinct roles
 
 ## Screenshots
 
+![Dashboard overview](public/images/image1.png)
+![Feedback inbox demonstrating AI auto-classification](public/images/image2.png)
+![Ask LOOP conversational RAG interface](public/images/image3.png)
+![Auto-generated Voice of Customer report](public/images/image4.png)
 > **TODO (Step 4.6):** Capture and insert real screenshots of the final UI for the Dashboard, Inbox, Ask LOOP, and Reports.
 
 - `[Screenshot: Dashboard overview highlighting sentiment and volume charts]`
